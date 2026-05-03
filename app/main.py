@@ -18,4 +18,4 @@ async def init_db():
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "message": "Workout Diary API"}
+    return {"status": "ok", "message": "Track Runner API"}
