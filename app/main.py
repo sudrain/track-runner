@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+import app.models
 from app.database import Base, engine
 
 app = FastAPI(title="Track Runner")
