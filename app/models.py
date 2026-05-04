@@ -29,7 +29,7 @@ class User(Base):
     id = Column(String(36), primary_key=True, default=generate_uuid)
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     # relations
     cardio_workouts = relationship(
@@ -48,7 +48,6 @@ class CardioWorkout(Base):
         String(36),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
-        index=True,
     )
     name = Column(String(100), nullable=False)  #  "Бег", "Интервалы"
     datetime = Column(DateTime, nullable=False)  # дата+время тренировки
@@ -65,7 +64,7 @@ class CardioInterval(Base):
 
     id = Column(Integer, primary_key=True)
     workout_id = Column(
-        String(36),
+        Integer,
         ForeignKey("cardio_workouts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
@@ -74,7 +73,6 @@ class CardioInterval(Base):
     distance_km = Column(Float, nullable=False)  # дистанция в км
     tempo_min_per_km = Column(Float, nullable=True)  # темп мин/км, опционально
     avg_heart_rate = Column(Integer, nullable=True)  # средний пульс
-    notes = Column(Text, default="")
 
     workout = relationship("CardioWorkout", back_populates="intervals")
 
@@ -103,13 +101,12 @@ class Exercise(Base):
 
     id = Column(Integer, primary_key=True)
     workout_id = Column(
-        String(36),
+        Integer,
         ForeignKey("strength_workouts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     name = Column(String(100), nullable=False)  # например "Жим лежа"
-    notes = Column(Text, default="")
 
     workout = relationship("StrengthWorkout", back_populates="exercises")
     sets = relationship(
@@ -122,7 +119,7 @@ class Set(Base):
 
     id = Column(Integer, primary_key=True)
     exercise_id = Column(
-        String(36),
+        Integer,
         ForeignKey("exercises.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
