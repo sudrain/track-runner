@@ -6,12 +6,16 @@ from pydantic import BaseModel, EmailStr, Field
 # ---------- Пользователь ----------
 class UserRegister(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=6, max_length=128)
+    password: str = Field(
+        min_length=6,
+        max_length=72,
+        description="Пароль до 72 символов (ограничение bcrypt)",
+    )
 
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(max_length=72)
 
 
 class UserOut(BaseModel):
