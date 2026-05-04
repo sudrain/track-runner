@@ -43,7 +43,7 @@ class User(Base):
 class CardioWorkout(Base):
     __tablename__ = "cardio_workouts"
 
-    id = Column(String(36), primary_key=True, default=generate_uuid)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         String(36),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -63,7 +63,7 @@ class CardioWorkout(Base):
 class CardioInterval(Base):
     __tablename__ = "cardio_intervals"
 
-    id = Column(String(36), primary_key=True, default=generate_uuid)
+    id = Column(Integer, primary_key=True)
     workout_id = Column(
         String(36),
         ForeignKey("cardio_workouts.id", ondelete="CASCADE"),
@@ -82,7 +82,7 @@ class CardioInterval(Base):
 class StrengthWorkout(Base):
     __tablename__ = "strength_workouts"
 
-    id = Column(String(36), primary_key=True, default=generate_uuid)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         String(36),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -101,7 +101,7 @@ class StrengthWorkout(Base):
 class Exercise(Base):
     __tablename__ = "exercises"
 
-    id = Column(String(36), primary_key=True, default=generate_uuid)
+    id = Column(Integer, primary_key=True)
     workout_id = Column(
         String(36),
         ForeignKey("strength_workouts.id", ondelete="CASCADE"),
@@ -120,7 +120,7 @@ class Exercise(Base):
 class Set(Base):
     __tablename__ = "sets"
 
-    id = Column(String(36), primary_key=True, default=generate_uuid)
+    id = Column(Integer, primary_key=True)
     exercise_id = Column(
         String(36),
         ForeignKey("exercises.id", ondelete="CASCADE"),
