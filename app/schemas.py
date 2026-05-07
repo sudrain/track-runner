@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field, model_validator  # noqa: F401
 
+
 # ---------- Пользователь ----------
 class UserRegister(BaseModel):
     email: EmailStr
@@ -48,18 +49,23 @@ class CardioIntervalOut(BaseModel):
     avg_heart_rate: int | None
     model_config = {"from_attributes": True}
 
+
 # ---------- Кардио-тренировка ----------
 class CardioWorkoutCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     datetime: datetime
     notes: str = ""
-    intervals: list[CardioIntervalCreate] = Field(..., min_length=1)  # хотя бы один интервал
+    intervals: list[CardioIntervalCreate] = Field(
+        ..., min_length=1
+    )  # хотя бы один интервал
+
 
 class CardioWorkoutUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
-    datetime: datetime | None 
+    datetime: datetime | None
     notes: str | None = None
     intervals: list[CardioIntervalCreate] | None = None
+
 
 class CardioWorkoutOut(BaseModel):
     id: int
@@ -67,4 +73,51 @@ class CardioWorkoutOut(BaseModel):
     datetime: datetime
     notes: str
     intervals: list[CardioIntervalOut]
+    model_config = {"from_attributes": True}
+
+
+# ---------- Подход (Set) ----------
+class SetCreate(BaseModel):
+    weight_kg: float = Field(gt=0, description="Вес в кг")
+    repetitions: int = Field(gt=0, description="Количество повторений")
+
+
+class SetOut(BaseModel):
+    id: int
+    weight_kg: float
+    repetitions: int
+    model_config = {"from_attributes": True}
+
+
+# ---------- Упражнение ----------
+class ExerciseCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    sets: list[SetCreate] = Field(..., min_length=1)  # хотя бы один подход
+
+
+class ExerciseOut(BaseModel):
+    id: int
+    name: str
+    sets: list[SetOut]
+    model_config = {"from_attributes": True}
+
+
+# ---------- Силовая тренировка ----------
+class StrengthWorkoutCreate(BaseModel):
+    datetime: datetime
+    notes: str = ""
+    exercises: list[ExerciseCreate] = Field(..., min_length=1)
+
+
+class StrengthWorkoutUpdate(BaseModel):
+    datetime: datetime | None
+    notes: str | None = None
+    exercises: list[ExerciseCreate] | None = None
+
+
+class StrengthWorkoutOut(BaseModel):
+    id: int
+    datetime: datetime
+    notes: str
+    exercises: list[ExerciseOut]
     model_config = {"from_attributes": True}

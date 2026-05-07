@@ -1,19 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from app.dependencies import get_db, get_current_user
-from app.models import User, CardioWorkout, CardioInterval
+
+from app.dependencies import get_current_user, get_db
+from app.models import CardioInterval, CardioWorkout, User
 from app.schemas import (
     CardioWorkoutCreate,
-    CardioWorkoutUpdate,
     CardioWorkoutOut,
+    CardioWorkoutUpdate,
 )
 
 router = APIRouter(prefix="/api/cardio", tags=["cardio"])
 
+
 # Создание тренировки с интервалами
-@router.post("/", response_model=CardioWorkoutOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=CardioWorkoutOut, status_code=status.HTTP_201_CREATED
+)
 async def create_cardio_workout(
     data: CardioWorkoutCreate,
     db: AsyncSession = Depends(get_db),
@@ -47,6 +51,7 @@ async def create_cardio_workout(
     workout = result.scalar_one()
     return workout
 
+
 # Получение всех своих тренировок (с интервалами)
 @router.get("/", response_model=list[CardioWorkoutOut])
 async def list_cardio_workouts(
@@ -61,6 +66,7 @@ async def list_cardio_workouts(
     )
     return result.scalars().all()
 
+
 # Получение одной тренировки
 @router.get("/{workout_id}", response_model=CardioWorkoutOut)
 async def get_cardio_workout(
@@ -70,13 +76,17 @@ async def get_cardio_workout(
 ):
     result = await db.execute(
         select(CardioWorkout)
-        .where(CardioWorkout.id == workout_id, CardioWorkout.user_id == current_user.id)
+        .where(
+            CardioWorkout.id == workout_id,
+            CardioWorkout.user_id == current_user.id,
+        )
         .options(selectinload(CardioWorkout.intervals))
     )
     workout = result.scalar_one_or_none()
     if not workout:
         raise HTTPException(status_code=404, detail="Workout not found")
     return workout
+
 
 # Обновление (замена интервалов)
 @router.put("/{workout_id}", response_model=CardioWorkoutOut)
@@ -88,7 +98,10 @@ async def update_cardio_workout(
 ):
     result = await db.execute(
         select(CardioWorkout)
-        .where(CardioWorkout.id == workout_id, CardioWorkout.user_id == current_user.id)
+        .where(
+            CardioWorkout.id == workout_id,
+            CardioWorkout.user_id == current_user.id,
+        )
         .options(selectinload(CardioWorkout.intervals))
     )
     workout = result.scalar_one_or_none()
@@ -97,9 +110,9 @@ async def update_cardio_workout(
 
     # Частичное обновление полей
     if data.name is not None:
-        workout.name = data.name
+        workout.name = data.name  # type: ignore
     if data.datetime is not None:
-        workout.datetime = data.datetime
+        workout.datetime = data.datetime  # type: ignore
 
     # Если переданы новые интервалы, удаляем старые и создаём новые
     if data.intervals is not None:
@@ -125,6 +138,7 @@ async def update_cardio_workout(
     )
     return result.scalar_one()
 
+
 # Удаление
 @router.delete("/{workout_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_cardio_workout(
@@ -133,7 +147,10 @@ async def delete_cardio_workout(
     current_user: User = Depends(get_current_user),
 ):
     result = await db.execute(
-        select(CardioWorkout).where(CardioWorkout.id == workout_id, CardioWorkout.user_id == current_user.id)
+        select(CardioWorkout).where(
+            CardioWorkout.id == workout_id,
+            CardioWorkout.user_id == current_user.id,
+        )
     )
     workout = result.scalar_one_or_none()
     if not workout:
