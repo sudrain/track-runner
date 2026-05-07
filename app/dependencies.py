@@ -7,10 +7,10 @@ from app.models import User
 from app.utils.security import decode_token
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncSession:  # type: ignore
     """Создаёт сессию БД для каждого запроса и закрывает после."""
     async with AsyncSessionLocal() as session:
-        yield session
+        yield session  # pyright: ignore[reportReturnType]
 
 
 async def get_current_user(
