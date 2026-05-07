@@ -121,3 +121,8 @@ class StrengthWorkoutOut(BaseModel):
     notes: str
     exercises: list[ExerciseOut]
     model_config = {"from_attributes": True}
+
+
+class RunningStatsOut(BaseModel):
+    week_km: float = Field(description="Километраж за текущую неделю (ПН-ВС)")
+    month_km: float = Field(description="Километраж за текущий месяц")

@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 
 import app.models
 from app.database import Base, engine
-from app.routers import auth, cardio, strength
+from app.routers import auth, cardio, statistics, strength
 
 app = FastAPI(title="Track Runner")
 
@@ -14,6 +14,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(auth.router)
 app.include_router(cardio.router)
 app.include_router(strength.router)
+app.include_router(statistics.router)
 
 
 @app.on_event("startup")
