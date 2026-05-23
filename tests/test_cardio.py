@@ -42,26 +42,32 @@ class TestListCardio:
     async def test_list_empty(self, auth_client: AsyncClient):
         response = await auth_client.get("/api/cardio/")
         assert response.status_code == 200
-        assert response.json() == []
+        data = response.json()
+        assert data["total"] == 0
+        assert data["items"] == []
 
     async def test_list_with_data(self, auth_client: AsyncClient):
         await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
         response = await auth_client.get("/api/cardio/")
         assert response.status_code == 200
         data = response.json()
-        assert len(data) == 1
-        assert data[0]["name"] == "Morning Run"
+        assert data["total"] == 1
+        assert len(data["items"]) == 1
+        assert data["items"][0]["name"] == "Morning Run"
 
     async def test_list_pagination(self, auth_client: AsyncClient):
         for i in range(3):
             w = {**_WORKOUT_DATA, "name": f"Run {i}"}
             await auth_client.post("/api/cardio/", json=w)
         full = await auth_client.get("/api/cardio/")
-        assert len(full.json()) == 3
+        assert full.json()["total"] == 3
+        assert len(full.json()["items"]) == 3
         limited = await auth_client.get("/api/cardio/?offset=0&limit=2")
-        assert len(limited.json()) == 2
+        assert len(limited.json()["items"]) == 2
+        assert limited.json()["total"] == 3
         skipped = await auth_client.get("/api/cardio/?offset=2&limit=10")
-        assert len(skipped.json()) == 1
+        assert len(skipped.json()["items"]) == 1
+        assert skipped.json()["total"] == 3
 
 
 @pytest.mark.asyncio

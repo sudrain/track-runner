@@ -1,10 +1,7 @@
 from datetime import timedelta
 
-import pytest
-from jose import JWTError, jwt
-
-from app.config import ALGORITHM, SECRET_KEY
 from app.utils.security import (
+    AUDIENCE,
     create_access_token,
     create_refresh_token,
     decode_token,
@@ -44,9 +41,11 @@ class TestAccessToken:
 
     def test_token_contains_expected_claims(self):
         token = create_access_token({"sub": "user-123"})
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = decode_token(token)
+        assert payload is not None
         assert payload["sub"] == "user-123"
         assert "exp" in payload
+        assert payload["aud"] == AUDIENCE
 
 
 class TestRefreshToken:
@@ -77,5 +76,5 @@ class TestRefreshToken:
 
     def test_decode_token_different_key(self):
         token = create_access_token({"sub": "user-123"})
-        with pytest.raises(JWTError):
-            jwt.decode(token, "different-secret", algorithms=["HS256"])
+        assert decode_token(token) is not None
+        assert decode_token(token + "tampered") is None

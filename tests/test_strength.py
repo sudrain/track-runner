@@ -49,15 +49,18 @@ class TestListStrength:
     async def test_list_empty(self, auth_client: AsyncClient):
         response = await auth_client.get("/api/strength/")
         assert response.status_code == 200
-        assert response.json() == []
+        data = response.json()
+        assert data["total"] == 0
+        assert data["items"] == []
 
     async def test_list_with_data(self, auth_client: AsyncClient):
         await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
         response = await auth_client.get("/api/strength/")
         assert response.status_code == 200
         data = response.json()
-        assert len(data) == 1
-        assert data[0]["notes"] == "Leg day"
+        assert data["total"] == 1
+        assert len(data["items"]) == 1
+        assert data["items"][0]["notes"] == "Leg day"
 
 
 @pytest.mark.asyncio

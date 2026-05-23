@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from httpx import AsyncClient
@@ -18,7 +18,7 @@ class TestRunningStats:
             "/api/cardio/",
             json={
                 "name": "Today Run",
-                "datetime": datetime.now(timezone.utc)
+                "datetime": datetime.now(UTC)
                 .isoformat(),
                 "notes": "",
                 "intervals": [
@@ -33,7 +33,7 @@ class TestRunningStats:
         assert data["month_km"] >= 5.0
 
     async def test_stats_old_workout_excluded(self, auth_client: AsyncClient):
-        old_date = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
+        old_date = (datetime.now(UTC) - timedelta(days=60)).isoformat()
         await auth_client.post(
             "/api/cardio/",
             json={

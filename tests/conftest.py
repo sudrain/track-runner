@@ -12,7 +12,8 @@ from sqlalchemy.ext.asyncio import (
 )
 
 # Set test env BEFORE any app imports
-_db_file = tempfile.mktemp(suffix=".db")
+_db_fd, _db_file = tempfile.mkstemp(suffix=".db")
+os.close(_db_fd)
 os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_db_file}"
 os.environ["SECRET_KEY"] = "test-secret-key-for-testing"
 os.environ["ALGORITHM"] = "HS256"
@@ -88,7 +89,7 @@ async def auth_client(
     client: AsyncClient, test_user: dict
 ) -> AsyncClient:
     response = await client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={"email": test_user["email"], "password": test_user["password"]},
     )
     assert response.status_code == 200
@@ -113,18 +114,13 @@ async def second_user(session: AsyncSession) -> dict:
 
 @pytest_asyncio.fixture
 async def second_auth_client(
-    session: AsyncSession, second_user: dict
+    client: AsyncClient, second_user: dict
 ) -> AsyncClient:
-    async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
-        yield session
-
-    app.dependency_overrides[get_db] = override_get_db
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post(
-            "/auth/login",
+            "/api/auth/login",
             json={"email": second_user["email"], "password": second_user["password"]},
         )
         assert response.status_code == 200
         yield ac
-    app.dependency_overrides.clear()

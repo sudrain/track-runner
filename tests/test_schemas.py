@@ -54,7 +54,9 @@ class TestCardioWorkoutCreate:
         data = CardioWorkoutCreate(
             name="Run",
             datetime="2026-05-20T06:00:00Z",
-            intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
+            intervals=[
+            CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)
+        ],
         )
         assert data.name == "Run"
 
@@ -71,7 +73,9 @@ class TestCardioWorkoutCreate:
             CardioWorkoutCreate(
                 name="Run",
                 datetime="2026-05-20T06:00:00",
-                intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
+                intervals=[
+            CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)
+        ],
             )
 
     def test_name_empty(self):
@@ -79,7 +83,9 @@ class TestCardioWorkoutCreate:
             CardioWorkoutCreate(
                 name="",
                 datetime="2026-05-20T06:00:00Z",
-                intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
+                intervals=[
+            CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)
+        ],
             )
 
     def test_name_too_long(self):
@@ -87,7 +93,9 @@ class TestCardioWorkoutCreate:
             CardioWorkoutCreate(
                 name="x" * 101,
                 datetime="2026-05-20T06:00:00Z",
-                intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
+                intervals=[
+            CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)
+        ],
             )
 
 
