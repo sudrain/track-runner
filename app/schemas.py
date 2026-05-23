@@ -1,7 +1,16 @@
 from datetime import datetime
-from typing import Optional
+from typing import Annotated
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import AfterValidator, BaseModel, EmailStr, Field
+
+
+def _ensure_aware(v: datetime) -> datetime:
+    if v.tzinfo is None:
+        raise ValueError("Datetime must be timezone-aware (e.g. '2026-05-20T06:00:00Z')")
+    return v
+
+
+AwareDatetime = Annotated[datetime, AfterValidator(_ensure_aware)]
 
 
 # ---------- Пользователь ----------
@@ -10,7 +19,7 @@ class UserRegister(BaseModel):
     password: str = Field(
         min_length=6,
         max_length=72,
-        description="Пароль до 72 символов (ограничение bcrypt)",
+        description="Пароль до 72 символов (ограничение bcrypt — 72 байта; для ASCII 1 символ = 1 байт)",
     )
 
 
@@ -54,7 +63,7 @@ class CardioIntervalOut(BaseModel):
 # ---------- Кардио-тренировка ----------
 class CardioWorkoutCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    datetime: datetime
+    datetime: AwareDatetime
     notes: str = ""
     intervals: list[CardioIntervalCreate] = Field(
         ..., min_length=1
@@ -63,7 +72,7 @@ class CardioWorkoutCreate(BaseModel):
 
 class CardioWorkoutUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
-    datetime: Optional[datetime] = None
+    datetime: AwareDatetime | None = None
     notes: str | None = None
     intervals: list[CardioIntervalCreate] | None = None
 
@@ -105,13 +114,13 @@ class ExerciseOut(BaseModel):
 
 # ---------- Силовая тренировка ----------
 class StrengthWorkoutCreate(BaseModel):
-    datetime: datetime
+    datetime: AwareDatetime
     notes: str = ""
     exercises: list[ExerciseCreate] = Field(..., min_length=1)
 
 
 class StrengthWorkoutUpdate(BaseModel):
-    datetime: Optional[datetime] = None
+    datetime: AwareDatetime | None = None
     notes: str | None = None
     exercises: list[ExerciseCreate] | None = None
 
