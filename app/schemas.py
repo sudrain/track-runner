@@ -1,12 +1,33 @@
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import AfterValidator, BaseModel, EmailStr, Field
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    SecretStr,
+    field_validator,
+)
+
+
+def _check_password_bytes(v: SecretStr) -> SecretStr:
+    if len(v.get_secret_value().encode("utf-8")) > 72:
+        raise ValueError("Password too long: bcrypt limit is 72 bytes")
+    return v
+
+
+class PaginatedResponse[T](BaseModel):
+    items: list[T]
+    total: int
 
 
 def _ensure_aware(v: datetime) -> datetime:
     if v.tzinfo is None:
-        raise ValueError("Datetime must be timezone-aware (e.g. '2026-05-20T06:00:00Z')")
+        raise ValueError(
+            "Datetime must be timezone-aware (e.g. '2026-05-20T06:00:00Z')"
+        )
     return v
 
 
@@ -16,16 +37,19 @@ AwareDatetime = Annotated[datetime, AfterValidator(_ensure_aware)]
 # ---------- Пользователь ----------
 class UserRegister(BaseModel):
     email: EmailStr
-    password: str = Field(
+    password: SecretStr = Field(
         min_length=6,
-        max_length=72,
-        description="Пароль до 72 символов (ограничение bcrypt — 72 байта; для ASCII 1 символ = 1 байт)",
+        max_length=128,
     )
+
+    _check_password_bytes = field_validator("password")(_check_password_bytes)
 
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str = Field(max_length=72)
+    password: SecretStr = Field(max_length=128)
+
+    _check_password_bytes = field_validator("password")(_check_password_bytes)
 
 
 class UserOut(BaseModel):
@@ -33,14 +57,7 @@ class UserOut(BaseModel):
     email: EmailStr
     created_at: datetime | None = None
 
-    model_config = {"from_attributes": True}
-
-
-# Для ответа с токенами (установить куки)
-class TokenOut(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Кардио-интервалы ----------
@@ -57,7 +74,7 @@ class CardioIntervalOut(BaseModel):
     distance_km: float
     tempo_min_per_km: float | None
     avg_heart_rate: int | None
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Кардио-тренировка ----------
@@ -74,7 +91,7 @@ class CardioWorkoutUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
     datetime: AwareDatetime | None = None
     notes: str | None = None
-    intervals: list[CardioIntervalCreate] | None = None
+    intervals: list[CardioIntervalCreate] | None = Field(None, min_length=1)
 
 
 class CardioWorkoutOut(BaseModel):
@@ -83,7 +100,7 @@ class CardioWorkoutOut(BaseModel):
     datetime: datetime
     notes: str
     intervals: list[CardioIntervalOut]
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Подход (Set) ----------
@@ -96,7 +113,7 @@ class SetOut(BaseModel):
     id: int
     weight_kg: float
     repetitions: int
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Упражнение ----------
@@ -109,7 +126,7 @@ class ExerciseOut(BaseModel):
     id: int
     name: str
     sets: list[SetOut]
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Силовая тренировка ----------
@@ -122,7 +139,7 @@ class StrengthWorkoutCreate(BaseModel):
 class StrengthWorkoutUpdate(BaseModel):
     datetime: AwareDatetime | None = None
     notes: str | None = None
-    exercises: list[ExerciseCreate] | None = None
+    exercises: list[ExerciseCreate] | None = Field(None, min_length=1)
 
 
 class StrengthWorkoutOut(BaseModel):
@@ -130,7 +147,7 @@ class StrengthWorkoutOut(BaseModel):
     datetime: datetime
     notes: str
     exercises: list[ExerciseOut]
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RunningStatsOut(BaseModel):
