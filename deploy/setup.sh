@@ -1,30 +1,19 @@
 #!/usr/bin/env bash
 # Track-Runner deploy script (IP-based, no HTTPS)
-# Usage: cd /path/to/track-runner && sudo bash deploy/setup.sh
+# Требует: uv sync --no-dev уже выполнен от пользователя
+# Usage: cd /opt/track-runner && sudo bash deploy/setup.sh
 set -euo pipefail
 
 APP_NAME="track-runner"
 APP_DIR=$(pwd)
-VPS_IP=$(curl -s ifconfig.me)
-
-# --- Определяем пользователя сервиса ---
-# Если проект в /home/ — запускаем от владельца директории
-# Иначе создаём trackrunner
-if echo "$APP_DIR" | grep -q "^/home/"; then
-    SERVICE_USER=$(stat -c '%U' "$APP_DIR")
-    echo "[*] Detected home directory — running as $SERVICE_USER"
-else
-    SERVICE_USER="trackrunner"
-    if ! id "$SERVICE_USER" &>/dev/null; then
-        echo "[*] Creating system user $SERVICE_USER..."
-        useradd -r -s /bin/false "$SERVICE_USER"
-    fi
-fi
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root: sudo bash deploy/setup.sh"
     exit 1
 fi
+
+SERVICE_USER=$(stat -c '%U' "$APP_DIR")
+VPS_IP=$(curl -s ifconfig.me)
 
 echo "[*] Installing system packages..."
 apt update
@@ -49,16 +38,7 @@ sed -i "s|sqlite+aiosqlite:///./dev.db|postgresql+asyncpg://$DB_USER:$DB_PASS@lo
 sed -i "s/<IP-АДРЕС-ВАШЕЙ-VPS>/$VPS_IP/" .env
 sed -i "s/TRUSTED_PROXY=false/TRUSTED_PROXY=true/" .env
 
-echo "[*] Installing uv and Python dependencies..."
-if ! command -v uv &>/dev/null; then
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-fi
-export PATH="$HOME/.local/bin:$PATH"
-uv sync --no-dev --directory "$APP_DIR"
-chown -R "$SERVICE_USER":"$SERVICE_USER" "$APP_DIR"
-
 echo "[*] Installing systemd service..."
-# Останавливаем старый запуск, если был
 systemctl stop $APP_NAME 2>/dev/null || true
 sed -e "s|__APP_DIR__|$APP_DIR|g" \
     -e "s|__APP_USER__|$SERVICE_USER|g" \
@@ -71,7 +51,6 @@ rm -f /etc/nginx/sites-enabled/default
 cp deploy/nginx.conf /etc/nginx/sites-available/$APP_NAME
 ln -sf /etc/nginx/sites-available/$APP_NAME /etc/nginx/sites-enabled/
 nginx -t && systemctl reload nginx
-# AppArmor может блокировать proxy_pass — переводим nginx в complain mode
 if command -v aa-complain &>/dev/null; then
     aa-complain /etc/apparmor.d/usr.sbin.nginx 2>/dev/null || true
 fi

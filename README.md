@@ -13,13 +13,20 @@ make run                    # uvicorn app.main:app --reload
 ## Деплой на VPS без домена (через IP)
 
 ```bash
-# 1. Клонировать на сервер
+# 1. Клонировать
 git clone <repo> /opt/track-runner
+cd /opt/track-runner
 
-# 2. Запустить скрипт (установит nginx, PostgreSQL, uv, настроит всё)
-sudo bash /opt/track-runner/deploy/setup.sh
+# 2. Установить uv (если нет)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 3. Готово
+# 3. Установить зависимости (от пользователя, без root)
+uv sync --no-dev
+
+# 4. Запустить деплой (установит nginx, PostgreSQL, настроит всё)
+sudo bash deploy/setup.sh
+
+# 5. Готово
 curl http://<IP-вашей-VPS>/health
 ```
 
