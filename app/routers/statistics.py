@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
@@ -34,7 +34,7 @@ async def running_stats(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    now = datetime.now(datetime.timezone.utc)  # type: ignore
+    now = datetime.now(timezone.utc)
     week_start, week_end = _week_range(now)
     month_start, month_end = _month_range(now)
 
