@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 # Track-Runner deploy script (IP-based, no HTTPS)
-# Usage: sudo bash deploy/setup.sh
+# Usage: cd /path/to/track-runner && sudo bash deploy/setup.sh
 set -euo pipefail
 
 APP_NAME="track-runner"
 APP_USER="trackrunner"
-APP_DIR="/opt/$APP_NAME"
-REPO_URL="https://github.com/your/repo.git"
-BRANCH="main"
+APP_DIR=$(pwd)
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root: sudo bash deploy/setup.sh"
@@ -22,7 +20,7 @@ apt install -y nginx postgresql postgresql-client curl
 
 if ! id "$APP_USER" &>/dev/null; then
     echo "[*] Creating system user $APP_USER..."
-    useradd -r -s /bin/false -m -d "$APP_DIR" "$APP_USER"
+    useradd -r -s /bin/false "$APP_USER"
 fi
 
 echo "[*] Setting up PostgreSQL..."
@@ -31,16 +29,6 @@ sudo -u postgres psql -c "CREATE USER $APP_USER WITH PASSWORD '$DB_PASS';" 2>/de
 sudo -u postgres psql -c "CREATE DATABASE $APP_NAME OWNER $APP_USER;" 2>/dev/null || echo "  database already exists"
 echo "DB_PASSWORD=$DB_PASS" >> /root/.deploy-secrets
 chmod 600 /root/.deploy-secrets
-
-echo "[*] Cloning repository..."
-if [ -d "$APP_DIR/.git" ]; then
-    cd "$APP_DIR"
-    git fetch origin "$BRANCH"
-    git reset --hard "origin/$BRANCH"
-else
-    git clone --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
-fi
-cd "$APP_DIR"
 
 echo "[*] Configuring .env..."
 cp deploy/.env.template .env
@@ -59,7 +47,7 @@ uv sync --no-dev --directory "$APP_DIR"
 chown -R "$APP_USER":"$APP_USER" "$APP_DIR"
 
 echo "[*] Installing systemd service..."
-cp deploy/$APP_NAME.service /etc/systemd/system/
+sed "s|__APP_DIR__|$APP_DIR|g" deploy/$APP_NAME.service > /etc/systemd/system/$APP_NAME.service
 systemctl daemon-reload
 systemctl enable --now $APP_NAME
 
