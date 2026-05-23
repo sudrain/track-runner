@@ -10,19 +10,32 @@ _request_counter = 0
 
 def _cleanup_store():
     now = time.time()
-    stale = [k for k, v in _store.items() if not v or v[-1] < now - 7200]
+    cutoff = now - 7200
+    stale = []
+    for k, v in _store.items():
+        v[:] = [t for t in v if t > cutoff]
+        if not v:
+            stale.append(k)
     for k in stale:
         del _store[k]
+
+
+def _rate_limit_key(request: Request) -> str:
+    from app.config import TRUSTED_PROXY
+
+    if TRUSTED_PROXY:
+        forwarded = request.headers.get("X-Forwarded-For", "")
+        real_ip = request.headers.get("X-Real-IP", "")
+        return (real_ip or forwarded.split(",")[0].strip()
+                or (request.client.host if request.client else None)
+                or "unknown")
+    return request.client.host or "unknown"
 
 
 def rate_limit(max_requests: int = 10, window_seconds: int = 60):
     def limiter(request: Request):
         global _request_counter
-        key = (
-            request.headers.get("X-Real-IP")
-            or (request.client.host if request.client else None)
-            or "unknown"
-        )
+        key = _rate_limit_key(request)
         now = time.time()
         cutoff = now - window_seconds
         timestamps = _store[key]

@@ -1,7 +1,10 @@
-from datetime import datetime, timezone
+import unicodedata
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-from sqlalchemy import delete as sa_delete, select
+from sqlalchemy import delete as sa_delete
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import (
@@ -11,7 +14,7 @@ from app.config import (
 )
 from app.dependencies import get_current_user, get_db
 from app.models import RevokedRefreshToken, User
-from app.schemas import TokenOut, UserLogin, UserOut, UserRegister
+from app.schemas import UserLogin, UserOut, UserRegister
 from app.utils.rate_limit import rate_limit
 from app.utils.security import (
     create_access_token,
@@ -21,7 +24,7 @@ from app.utils.security import (
     verify_password,
 )
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 @router.post(
@@ -32,32 +35,42 @@ async def register(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(rate_limit(max_requests=5, window_seconds=300)),
 ):
-    # Проверка, существует ли email
-    existing = await db.execute(select(User).where(User.email == data.email))
+    email = unicodedata.normalize("NFKC", data.email).lower()
+    existing = await db.execute(select(User).where(User.email == email))
     if existing.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
         )
     user = User(
-        email=data.email, hashed_password=get_password_hash(data.password)
+        email=email, hashed_password=get_password_hash(data.password.get_secret_value())
     )
     db.add(user)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already registered",
+        ) from None
     await db.refresh(user)
     return user
 
 
-@router.post("/login", response_model=TokenOut)
+@router.post("/login", response_model=UserOut)
 async def login(
     data: UserLogin,
     response: Response,
     db: AsyncSession = Depends(get_db),
     _: None = Depends(rate_limit(max_requests=10, window_seconds=300)),
 ):
-    user = await db.execute(select(User).where(User.email == data.email))
+    email = unicodedata.normalize("NFKC", data.email).lower()
+    user = await db.execute(select(User).where(User.email == email))
     user = user.scalar_one_or_none()
-    if not user or not verify_password(data.password, user.hashed_password):
+    if not user or not verify_password(
+        data.password.get_secret_value(), user.hashed_password
+    ):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
@@ -65,7 +78,7 @@ async def login(
     access_token = create_access_token(data={"sub": user.id})
     refresh_token = create_refresh_token(data={"sub": user.id})
     _set_auth_cookies(response, access_token, refresh_token)
-    return TokenOut(access_token=access_token, refresh_token=refresh_token)
+    return user
 
 
 def _set_auth_cookies(response: Response, access_token: str, refresh_token: str):
@@ -75,7 +88,7 @@ def _set_auth_cookies(response: Response, access_token: str, refresh_token: str)
         httponly=True,
         secure=COOKIE_SECURE,
         samesite="strict",
-        path="/",
+        path="/api",
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
     response.set_cookie(
@@ -84,12 +97,12 @@ def _set_auth_cookies(response: Response, access_token: str, refresh_token: str)
         httponly=True,
         secure=COOKIE_SECURE,
         samesite="strict",
-        path="/",
+        path="/api",
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
     )
 
 
-@router.post("/refresh", response_model=TokenOut)
+@router.post("/refresh")
 async def refresh(
     request: Request,
     response: Response,
@@ -111,14 +124,20 @@ async def refresh(
     jti = payload.get("jti")
     user_id = payload.get("sub")
 
-    # Rotate: revoke old token
+    # Atomically insert JTI — unique constraint prevents reuse race
     if jti:
-        existing = await db.execute(
-            select(RevokedRefreshToken).where(
-                RevokedRefreshToken.token_jti == jti
+        exp = payload.get("exp")
+        try:
+            db.add(
+                RevokedRefreshToken(
+                    user_id=user_id,
+                    token_jti=jti,
+                    expires_at=datetime.fromtimestamp(exp, tz=UTC),
+                )
             )
-        )
-        if existing.scalar_one_or_none():
+            await db.flush()
+        except IntegrityError:
+            await db.rollback()
             # Token reuse detected — revoke all sessions for this user
             await db.execute(
                 sa_delete(RevokedRefreshToken).where(
@@ -129,7 +148,7 @@ async def refresh(
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token has been revoked",
-            )
+            ) from None
 
     user = await db.get(User, user_id)
     if not user:
@@ -140,28 +159,38 @@ async def refresh(
     new_access = create_access_token({"sub": user.id})
     new_refresh = create_refresh_token({"sub": user.id})
 
-    if jti:
-        exp = payload.get("exp")
-        db.add(
-            RevokedRefreshToken(
-                user_id=user_id,
-                token_jti=jti,
-                expires_at=datetime.fromtimestamp(exp, tz=timezone.utc),
-            )
-        )
-
     _set_auth_cookies(response, new_access, new_refresh)
     await db.commit()
-    return TokenOut(access_token=new_access, refresh_token=new_refresh)
+    return {"ok": True}
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
+    request: Request,
     response: Response,
+    db: AsyncSession = Depends(get_db),
     _: None = Depends(rate_limit(max_requests=5, window_seconds=300)),
 ):
-    response.delete_cookie(key="access_token")
-    response.delete_cookie(key="refresh_token")
+    raw_token = request.cookies.get("refresh_token")
+    if raw_token:
+        payload = decode_token(raw_token)
+        if payload:
+            jti = payload.get("jti")
+            user_id = payload.get("sub")
+            exp = payload.get("exp")
+            if jti and user_id and exp:
+                db.add(
+                    RevokedRefreshToken(
+                        user_id=user_id,
+                        token_jti=jti,
+                        expires_at=datetime.fromtimestamp(
+                            exp, tz=UTC
+                        ),
+                    )
+                )
+                await db.commit()
+    response.delete_cookie(key="access_token", path="/api")
+    response.delete_cookie(key="refresh_token", path="/api")
     return None
 
 
