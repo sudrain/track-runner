@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -41,7 +42,7 @@ def create_refresh_token(data: dict) -> str:
         days=REFRESH_TOKEN_EXPIRE_DAYS
     )
     to_encode = data.copy()
-    to_encode.update({"exp": expire, "type": "refresh"})
+    to_encode.update({"exp": expire, "type": "refresh", "jti": uuid.uuid4().hex})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
