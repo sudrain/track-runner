@@ -24,9 +24,9 @@ fuser -k 8000/tcp 2>/dev/null || true
 
 echo "[*] Setting up PostgreSQL..."
 DB_USER="track_runner"
-DB_PASS=$(openssl rand -base64 24)
+DB_PASS=$(openssl rand -hex 16)
 sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';" 2>/dev/null || echo "  user already exists"
-sudo -u postgres psql -c "CREATE DATABASE $APP_NAME OWNER $DB_USER;" 2>/dev/null || echo "  database already exists"
+sudo -u postgres psql -c "CREATE DATABASE \"$APP_NAME\" OWNER $DB_USER;" 2>/dev/null || echo "  database already exists"
 echo "DB_PASSWORD=$DB_PASS" >> /root/.deploy-secrets
 chmod 600 /root/.deploy-secrets
 
