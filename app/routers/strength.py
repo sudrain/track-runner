@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import delete as sa_delete, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.dependencies import get_current_user, get_db, PaginatedParams
+from app.dependencies import PaginatedParams, get_current_user, get_db
 from app.models import Exercise, Set, StrengthWorkout, User
 from app.schemas import (
+    PaginatedResponse,
     StrengthWorkoutCreate,
     StrengthWorkoutOut,
     StrengthWorkoutUpdate,
@@ -42,8 +43,6 @@ async def create_strength_workout(
             )
             db.add(s)
     await db.commit()
-    await db.refresh(workout)
-    # Загружаем со связями
     result = await db.execute(
         select(StrengthWorkout)
         .where(StrengthWorkout.id == workout.id)
@@ -55,12 +54,18 @@ async def create_strength_workout(
     return workout
 
 
-@router.get("/", response_model=list[StrengthWorkoutOut])
+@router.get("/", response_model=PaginatedResponse[StrengthWorkoutOut])
 async def list_strength_workouts(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
     pagination: PaginatedParams = Depends(),
 ):
+    total_result = await db.execute(
+        select(func.count(StrengthWorkout.id)).where(
+            StrengthWorkout.user_id == current_user.id
+        )
+    )
+    total = total_result.scalar_one()
     result = await db.execute(
         select(StrengthWorkout)
         .where(StrengthWorkout.user_id == current_user.id)
@@ -71,7 +76,8 @@ async def list_strength_workouts(
         .offset(pagination.offset)
         .limit(pagination.limit)
     )
-    return result.scalars().all()
+    items = result.scalars().all()
+    return PaginatedResponse(items=items, total=total)
 
 
 @router.get("/{workout_id}", response_model=StrengthWorkoutOut)
@@ -123,26 +129,18 @@ async def update_strength_workout(
         workout.notes = data.notes  # type: ignore[assignment]
 
     if data.exercises is not None:
-        # Удаляем старые упражнения (каскад удалит подходы)
-        await db.execute(
-            sa_delete(Exercise).where(Exercise.workout_id == workout.id)
-        )
+        # Используем cascade="all, delete-orphan" для чистого удаления
+        workout.exercises.clear()
         for ex_data in data.exercises:
-            new_ex = Exercise(
-                workout=workout,
-                name=ex_data.name,
-            )
-            db.add(new_ex)
+            exercise = Exercise(name=ex_data.name)
             for set_data in ex_data.sets:
-                s = Set(
-                    exercise=new_ex,
+                exercise.sets.append(Set(
                     weight_kg=set_data.weight_kg,
                     repetitions=set_data.repetitions,
-                )
-                db.add(s)
+                ))
+            workout.exercises.append(exercise)
 
     await db.commit()
-    await db.refresh(workout)
     result = await db.execute(
         select(StrengthWorkout)
         .where(StrengthWorkout.id == workout.id)
@@ -150,7 +148,8 @@ async def update_strength_workout(
             selectinload(StrengthWorkout.exercises).selectinload(Exercise.sets)
         )
     )
-    return result.scalar_one()
+    workout = result.scalar_one()
+    return workout
 
 
 @router.delete("/{workout_id}", status_code=status.HTTP_204_NO_CONTENT)

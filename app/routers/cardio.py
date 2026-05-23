@@ -1,14 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import delete as sa_delete, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.dependencies import get_current_user, get_db, PaginatedParams
+from app.dependencies import PaginatedParams, get_current_user, get_db
 from app.models import CardioInterval, CardioWorkout, User
 from app.schemas import (
     CardioWorkoutCreate,
     CardioWorkoutOut,
     CardioWorkoutUpdate,
+    PaginatedResponse,
 )
 
 router = APIRouter(prefix="/api/cardio", tags=["cardio"])
@@ -41,24 +42,23 @@ async def create_cardio_workout(
         )
         db.add(interval)
     await db.commit()
-    await db.refresh(workout)
-    # Загружаем интервалы для ответа
-    result = await db.execute(
-        select(CardioWorkout)
-        .where(CardioWorkout.id == workout.id)
-        .options(selectinload(CardioWorkout.intervals))
-    )
-    workout = result.scalar_one()
+    await db.refresh(workout, ["intervals"])
     return workout
 
 
 # Получение всех своих тренировок (с интервалами)
-@router.get("/", response_model=list[CardioWorkoutOut])
+@router.get("/", response_model=PaginatedResponse[CardioWorkoutOut])
 async def list_cardio_workouts(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
     pagination: PaginatedParams = Depends(),
 ):
+    total_result = await db.execute(
+        select(func.count(CardioWorkout.id)).where(
+            CardioWorkout.user_id == current_user.id
+        )
+    )
+    total = total_result.scalar_one()
     result = await db.execute(
         select(CardioWorkout)
         .where(CardioWorkout.user_id == current_user.id)
@@ -67,7 +67,8 @@ async def list_cardio_workouts(
         .offset(pagination.offset)
         .limit(pagination.limit)
     )
-    return result.scalars().all()
+    items = result.scalars().all()
+    return PaginatedResponse(items=items, total=total)
 
 
 # Получение одной тренировки
@@ -119,32 +120,20 @@ async def update_cardio_workout(
     if data.notes is not None:
         workout.notes = data.notes
 
-    # Если переданы новые интервалы, удаляем старые и создаём новые
+    # Если переданы новые интервалы, используем cascade="all, delete-orphan"
     if data.intervals is not None:
-        await db.execute(
-            sa_delete(CardioInterval).where(
-                CardioInterval.workout_id == workout.id
-            )
-        )
+        workout.intervals.clear()
         for interval_data in data.intervals:
-            new_interval = CardioInterval(
-                workout=workout,
+            workout.intervals.append(CardioInterval(
                 duration_minutes=interval_data.duration_minutes,
                 distance_km=interval_data.distance_km,
                 tempo_min_per_km=interval_data.tempo_min_per_km,
                 avg_heart_rate=interval_data.avg_heart_rate,
-            )
-            db.add(new_interval)
+            ))
 
     await db.commit()
-    await db.refresh(workout)
-    # Перезапрашиваем с интервалами
-    result = await db.execute(
-        select(CardioWorkout)
-        .where(CardioWorkout.id == workout.id)
-        .options(selectinload(CardioWorkout.intervals))
-    )
-    return result.scalar_one()
+    await db.refresh(workout, ["intervals"])
+    return workout
 
 
 # Удаление
