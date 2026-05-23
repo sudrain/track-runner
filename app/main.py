@@ -1,20 +1,24 @@
 import asyncio
+import logging
 import os
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 
 from alembic.config import Config
-from alembic import command
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import text
+from sqlalchemy import delete, text
 from sqlalchemy.exc import ProgrammingError
 
 import app.models
+from alembic import command
 from app.config import CORS_ORIGINS
-from app.database import Base, engine
+from app.database import AsyncSessionLocal, Base, engine
+from app.models import RevokedRefreshToken
 from app.routers import auth, cardio, statistics, strength
+
+logger = logging.getLogger("track-runner")
 
 
 def _run_alembic_upgrade():
@@ -25,8 +29,22 @@ def _run_alembic_upgrade():
     try:
         command.upgrade(cfg, "head")
     except ProgrammingError:
+        logger.warning("Migration failed (fresh DB?), stamping head")
         command.stamp(cfg, "head")
     return True
+
+
+async def _cleanup_expired_tokens():
+    try:
+        async with AsyncSessionLocal() as session:
+            await session.execute(
+                delete(RevokedRefreshToken).where(
+                    RevokedRefreshToken.expires_at < datetime.now(UTC)
+                )
+            )
+            await session.commit()
+    except Exception:
+        logger.warning("Failed to cleanup expired tokens", exc_info=True)
 
 
 @asynccontextmanager
@@ -36,12 +54,7 @@ async def lifespan(app: FastAPI):
     if not migrated:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-    # Проверка подключения к БД
-    try:
-        async with engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
-    except Exception:
-        pass
+    await _cleanup_expired_tokens()
     yield
 
 
@@ -56,7 +69,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 app.include_router(auth.router)
@@ -69,8 +81,11 @@ app.include_router(statistics.router)
 async def global_exception_handler(request: Request, exc: Exception):
     if isinstance(exc, HTTPException):
         return JSONResponse(
-            status_code=exc.status_code, content={"detail": exc.detail}
+            status_code=exc.status_code,
+            content={"detail": exc.detail},
+            headers=getattr(exc, "headers", None),
         )
+    logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal server error"},
@@ -86,9 +101,16 @@ async def root():
 async def health():
     db_ok = False
     try:
-        async with engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
+        async with asyncio.timeout(5):
+            async with engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
         db_ok = True
+    except TimeoutError:
+        logger.warning("Health check DB timed out after 5s")
+    except ProgrammingError:
+        logger.exception("Health check DB query failed")
     except Exception:
-        pass
-    return {"status": "ok" if db_ok else "degraded", "database": "ok" if db_ok else "error"}
+        logger.warning("Health check DB connection failed", exc_info=True)
+    status = "ok" if db_ok else "degraded"
+    db_status = "ok" if db_ok else "error"
+    return {"status": status, "database": db_status}
