@@ -4,12 +4,6 @@ import os
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
-logging.getLogger("track-runner").setLevel(logging.DEBUG)
-
 from alembic.config import Config
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,6 +19,11 @@ from app.models import RevokedRefreshToken
 from app.routers import auth, cardio, statistics, strength
 
 logger = logging.getLogger("track-runner")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logging.getLogger("track-runner").setLevel(logging.DEBUG)
 
 
 def _run_alembic_upgrade():
