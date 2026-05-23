@@ -5,8 +5,8 @@ Requires=postgresql.service
 
 [Service]
 Type=simple
-User=trackrunner
-Group=trackrunner
+User=__APP_USER__
+Group=__APP_USER__
 WorkingDirectory=__APP_DIR__
 EnvironmentFile=__APP_DIR__/.env
 ExecStart=__APP_DIR__/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
