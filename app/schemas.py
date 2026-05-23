@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -57,12 +58,12 @@ class CardioWorkoutCreate(BaseModel):
     notes: str = ""
     intervals: list[CardioIntervalCreate] = Field(
         ..., min_length=1
-    )  # хотя бы один интервал
+    )
 
 
 class CardioWorkoutUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
-    datetime: datetime | None
+    datetime: Optional[datetime] = None
     notes: str | None = None
     intervals: list[CardioIntervalCreate] | None = None
 
@@ -110,7 +111,7 @@ class StrengthWorkoutCreate(BaseModel):
 
 
 class StrengthWorkoutUpdate(BaseModel):
-    datetime: datetime | None
+    datetime: Optional[datetime] = None
     notes: str | None = None
     exercises: list[ExerciseCreate] | None = None
 
