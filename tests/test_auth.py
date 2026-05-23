@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
 
+from app.utils.security import create_refresh_token
+
 
 @pytest.mark.asyncio
 class TestRegister:
@@ -95,3 +97,46 @@ class TestRefresh:
         response = await client.post("/auth/refresh")
         assert response.status_code == 401
         assert "missing" in response.json()["detail"].lower()
+
+    async def test_refresh_invalid_token(self, client: AsyncClient):
+        client.cookies.set("refresh_token", "obviously-invalid-token")
+        response = await client.post("/auth/refresh")
+        assert response.status_code == 401
+        assert "invalid" in response.json()["detail"].lower()
+
+    async def test_refresh_expired_token(self, client: AsyncClient):
+        expired = create_refresh_token({"sub": "any"})
+        # Override exp to be in the past
+        from jose import jwt
+        from app.config import SECRET_KEY, ALGORITHM
+
+        payload = jwt.decode(expired, SECRET_KEY, algorithms=[ALGORITHM])
+        payload["exp"] = 0
+        tampered = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+        client.cookies.set("refresh_token", tampered)
+        response = await client.post("/auth/refresh")
+        assert response.status_code == 401
+
+    async def test_refresh_token_reuse(self, auth_client: AsyncClient):
+        old_refresh = auth_client.cookies.get("refresh_token")
+        # First refresh rotates the token
+        resp1 = await auth_client.post("/auth/refresh")
+        assert resp1.status_code == 200
+        # Reuse the old token
+        auth_client.cookies.set("refresh_token", old_refresh)
+        resp2 = await auth_client.post("/auth/refresh")
+        assert resp2.status_code == 401
+        assert "revoked" in resp2.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+class TestLogout:
+    async def test_logout_success(self, auth_client: AsyncClient):
+        response = await auth_client.post("/auth/logout")
+        assert response.status_code == 204
+        me = await auth_client.get("/auth/me")
+        assert me.status_code == 401
+
+    async def test_logout_unauthenticated(self, client: AsyncClient):
+        response = await client.post("/auth/logout")
+        assert response.status_code == 204

@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 _WORKOUT_DATA = {
-    "datetime": "2026-05-20T10:00:00",
+    "datetime": "2026-05-20T10:00:00Z",
     "notes": "Leg day",
     "exercises": [
         {
@@ -73,6 +73,18 @@ class TestGetStrength:
         response = await auth_client.get("/api/strength/99999")
         assert response.status_code == 404
 
+    async def test_get_unauthorized(self, client: AsyncClient):
+        response = await client.get("/api/strength/1")
+        assert response.status_code == 401
+
+    async def test_get_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.get(f"/api/strength/{workout_id}")
+        assert response.status_code == 404
+
 
 @pytest.mark.asyncio
 class TestUpdateStrength:
@@ -107,6 +119,31 @@ class TestUpdateStrength:
         assert response.status_code == 200
         assert response.json()["notes"] == "Just notes"
 
+    async def test_update_not_found(self, auth_client: AsyncClient):
+        response = await auth_client.put(
+            "/api/strength/99999",
+            json={"notes": "Nope"},
+        )
+        assert response.status_code == 404
+
+    async def test_update_unauthorized(self, client: AsyncClient):
+        response = await client.put(
+            "/api/strength/1",
+            json={"notes": "Hacked"},
+        )
+        assert response.status_code == 401
+
+    async def test_update_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.put(
+            f"/api/strength/{workout_id}",
+            json={"notes": "Stolen"},
+        )
+        assert response.status_code == 404
+
 
 @pytest.mark.asyncio
 class TestDeleteStrength:
@@ -118,4 +155,16 @@ class TestDeleteStrength:
 
     async def test_delete_not_found(self, auth_client: AsyncClient):
         response = await auth_client.delete("/api/strength/99999")
+        assert response.status_code == 404
+
+    async def test_delete_unauthorized(self, client: AsyncClient):
+        response = await client.delete("/api/strength/1")
+        assert response.status_code == 401
+
+    async def test_delete_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.delete(f"/api/strength/{workout_id}")
         assert response.status_code == 404

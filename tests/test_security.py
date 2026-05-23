@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from jose import jwt
+import pytest
+from jose import JWTError, jwt
 
 from app.config import ALGORITHM, SECRET_KEY
 from app.utils.security import (
@@ -60,3 +61,21 @@ class TestRefreshToken:
         token = create_access_token({"sub": "user-123"})
         payload = decode_token(token)
         assert payload.get("type") != "refresh"
+
+    def test_refresh_token_has_jti(self):
+        token = create_refresh_token({"sub": "user-123"})
+        payload = decode_token(token)
+        assert "jti" in payload
+        assert len(payload["jti"]) > 0
+
+    def test_consecutive_refresh_tokens_have_unique_jti(self):
+        t1 = create_refresh_token({"sub": "user-123"})
+        t2 = create_refresh_token({"sub": "user-123"})
+        p1 = decode_token(t1)
+        p2 = decode_token(t2)
+        assert p1["jti"] != p2["jti"]
+
+    def test_decode_token_different_key(self):
+        token = create_access_token({"sub": "user-123"})
+        with pytest.raises(JWTError):
+            jwt.decode(token, "different-secret", algorithms=["HS256"])

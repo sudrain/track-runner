@@ -24,6 +24,10 @@ class TestUserRegister:
         with pytest.raises(ValidationError):
             UserRegister(email="not-an-email", password="secure123")
 
+    def test_password_too_long(self):
+        with pytest.raises(ValidationError):
+            UserRegister(email="user@example.com", password="x" * 73)
+
 
 class TestCardioIntervalCreate:
     def test_valid(self):
@@ -49,7 +53,7 @@ class TestCardioWorkoutCreate:
     def test_valid(self):
         data = CardioWorkoutCreate(
             name="Run",
-            datetime="2026-05-20T06:00:00",
+            datetime="2026-05-20T06:00:00Z",
             intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
         )
         assert data.name == "Run"
@@ -58,8 +62,32 @@ class TestCardioWorkoutCreate:
         with pytest.raises(ValidationError):
             CardioWorkoutCreate(
                 name="Run",
-                datetime="2026-05-20T06:00:00",
+                datetime="2026-05-20T06:00:00Z",
                 intervals=[],
+            )
+
+    def test_naive_datetime_rejected(self):
+        with pytest.raises(ValidationError):
+            CardioWorkoutCreate(
+                name="Run",
+                datetime="2026-05-20T06:00:00",
+                intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
+            )
+
+    def test_name_empty(self):
+        with pytest.raises(ValidationError):
+            CardioWorkoutCreate(
+                name="",
+                datetime="2026-05-20T06:00:00Z",
+                intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
+            )
+
+    def test_name_too_long(self):
+        with pytest.raises(ValidationError):
+            CardioWorkoutCreate(
+                name="x" * 101,
+                datetime="2026-05-20T06:00:00Z",
+                intervals=[CardioIntervalCreate(duration_minutes=30.0, distance_km=5.0)],
             )
 
 
@@ -99,7 +127,7 @@ class TestExerciseCreate:
 class TestStrengthWorkoutCreate:
     def test_valid(self):
         data = StrengthWorkoutCreate(
-            datetime="2026-05-20T10:00:00",
+            datetime="2026-05-20T10:00:00Z",
             exercises=[
                 ExerciseCreate(
                     name="Squat",
@@ -112,5 +140,17 @@ class TestStrengthWorkoutCreate:
     def test_empty_exercises(self):
         with pytest.raises(ValidationError):
             StrengthWorkoutCreate(
-                datetime="2026-05-20T10:00:00", exercises=[]
+                datetime="2026-05-20T10:00:00Z", exercises=[]
+            )
+
+    def test_naive_datetime_rejected(self):
+        with pytest.raises(ValidationError):
+            StrengthWorkoutCreate(
+                datetime="2026-05-20T10:00:00",
+                exercises=[
+                    ExerciseCreate(
+                        name="Squat",
+                        sets=[SetCreate(weight_kg=80.0, repetitions=10)],
+                    )
+                ],
             )

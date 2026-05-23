@@ -19,7 +19,6 @@ class TestRunningStats:
             json={
                 "name": "Today Run",
                 "datetime": datetime.now(timezone.utc)
-                .replace(tzinfo=None)
                 .isoformat(),
                 "notes": "",
                 "intervals": [
@@ -34,7 +33,7 @@ class TestRunningStats:
         assert data["month_km"] >= 5.0
 
     async def test_stats_old_workout_excluded(self, auth_client: AsyncClient):
-        old_date = (datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=60)).isoformat()
+        old_date = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
         await auth_client.post(
             "/api/cardio/",
             json={
@@ -50,3 +49,7 @@ class TestRunningStats:
         data = response.json()
         assert data["week_km"] == 0
         assert data["month_km"] == 0
+
+    async def test_stats_unauthorized(self, client: AsyncClient):
+        response = await client.get("/api/statistics/running")
+        assert response.status_code == 401

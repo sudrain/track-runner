@@ -93,3 +93,38 @@ async def auth_client(
     )
     assert response.status_code == 200
     return client
+
+
+@pytest_asyncio.fixture
+async def second_user(session: AsyncSession) -> dict:
+    global _user_counter
+    _user_counter += 1
+    email = f"test{_user_counter}@example.com"
+    password = "secondpass123"
+    user = User(
+        email=email,
+        hashed_password=get_password_hash(password),
+    )
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    return {"id": user.id, "email": email, "password": password}
+
+
+@pytest_asyncio.fixture
+async def second_auth_client(
+    session: AsyncSession, second_user: dict
+) -> AsyncClient:
+    async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
+        yield session
+
+    app.dependency_overrides[get_db] = override_get_db
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post(
+            "/auth/login",
+            json={"email": second_user["email"], "password": second_user["password"]},
+        )
+        assert response.status_code == 200
+        yield ac
+    app.dependency_overrides.clear()

@@ -1,11 +1,9 @@
-from datetime import datetime, timedelta, timezone
-
 import pytest
 from httpx import AsyncClient
 
 _WORKOUT_DATA = {
     "name": "Morning Run",
-    "datetime": "2026-05-20T06:00:00",
+    "datetime": "2026-05-20T06:00:00Z",
     "notes": "Good run",
     "intervals": [
         {
@@ -54,6 +52,17 @@ class TestListCardio:
         assert len(data) == 1
         assert data[0]["name"] == "Morning Run"
 
+    async def test_list_pagination(self, auth_client: AsyncClient):
+        for i in range(3):
+            w = {**_WORKOUT_DATA, "name": f"Run {i}"}
+            await auth_client.post("/api/cardio/", json=w)
+        full = await auth_client.get("/api/cardio/")
+        assert len(full.json()) == 3
+        limited = await auth_client.get("/api/cardio/?offset=0&limit=2")
+        assert len(limited.json()) == 2
+        skipped = await auth_client.get("/api/cardio/?offset=2&limit=10")
+        assert len(skipped.json()) == 1
+
 
 @pytest.mark.asyncio
 class TestGetCardio:
@@ -71,6 +80,14 @@ class TestGetCardio:
     async def test_get_unauthorized(self, client: AsyncClient):
         response = await client.get("/api/cardio/1")
         assert response.status_code == 401
+
+    async def test_get_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.get(f"/api/cardio/{workout_id}")
+        assert response.status_code == 404
 
 
 @pytest.mark.asyncio
@@ -108,6 +125,31 @@ class TestUpdateCardio:
         assert response.status_code == 200
         assert response.json()["notes"] == "Just notes update"
 
+    async def test_update_not_found(self, auth_client: AsyncClient):
+        response = await auth_client.put(
+            "/api/cardio/99999",
+            json={"name": "Doesn't matter"},
+        )
+        assert response.status_code == 404
+
+    async def test_update_unauthorized(self, client: AsyncClient):
+        response = await client.put(
+            "/api/cardio/1",
+            json={"name": "Hacked"},
+        )
+        assert response.status_code == 401
+
+    async def test_update_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.put(
+            f"/api/cardio/{workout_id}",
+            json={"name": "Stolen"},
+        )
+        assert response.status_code == 404
+
 
 @pytest.mark.asyncio
 class TestDeleteCardio:
@@ -119,4 +161,16 @@ class TestDeleteCardio:
 
     async def test_delete_not_found(self, auth_client: AsyncClient):
         response = await auth_client.delete("/api/cardio/99999")
+        assert response.status_code == 404
+
+    async def test_delete_unauthorized(self, client: AsyncClient):
+        response = await client.delete("/api/cardio/1")
+        assert response.status_code == 401
+
+    async def test_delete_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.delete(f"/api/cardio/{workout_id}")
         assert response.status_code == 404
