@@ -16,3 +16,8 @@ wheels/
 htmlcov
 plan.txt
 dev.db
+
+# Deploy secrets
+deploy/.env
+deploy/.env.prod
+/root/.deploy-secrets

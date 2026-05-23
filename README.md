@@ -2,13 +2,29 @@
 
 Дневник тренировок — FastAPI REST API.
 
-## Запуск
+## Запуск (разработка)
 
 ```bash
 uv sync
 cp .env.example .env        # и отредактировать SECRET_KEY, DATABASE_URL
 make run                    # uvicorn app.main:app --reload
 ```
+
+## Деплой на VPS без домена (через IP)
+
+```bash
+# 1. Клонировать на сервер
+git clone <repo> /opt/track-runner
+
+# 2. Запустить скрипт (установит nginx, PostgreSQL, uv, настроит всё)
+sudo bash /opt/track-runner/deploy/setup.sh
+
+# 3. Готово
+curl http://<IP-вашей-VPS>/health
+```
+
+Скрипт автоматически подставит IP в `.env` и nginx.
+Куки работают без HTTPS (COOKIE_SECURE=false).
 
 ## Миграции
 
