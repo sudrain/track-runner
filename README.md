@@ -1,38 +1,63 @@
+# Track-Runner
+
+Дневник тренировок — FastAPI REST API.
+
+## Запуск
+
+```bash
+uv sync
+cp .env.example .env        # и отредактировать SECRET_KEY, DATABASE_URL
+make run                    # uvicorn app.main:app --reload
+```
+
+## Миграции
+
+```bash
+make migrate                # автогенерация + apply
+```
+
+## Тесты и линтинг
+
+```bash
+make test                   # pytest
+make lint                   # ruff check
+```
+
+## Проект
+
+```
 📁 track-runner/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py               # Точка входа, создание FastAPI, подключение роутеров, статики
-│   ├── config.py             # Настройки (строка подключения, секретные ключи)
-│   ├── database.py           # Асинхронный движок SQLAlchemy, sessionmaker, Base
-│   ├── models.py             # SQLAlchemy модели (User, CardioWorkout, CardioInterval, StrengthWorkout, Exercise, Set)
-│   ├── schemas.py            # Pydantic схемы для валидации запросов/ответов
+│   ├── main.py             # Точка входа, FastAPI app, middleware, exception handler
+│   ├── config.py           # Настройки (SECRET_KEY, DATABASE_URL, CORS, rate limit)
+│   ├── database.py         # Асинхронный SQLAlchemy движок + сессия
+│   ├── models.py           # ORM модели (User, CardioWorkout, StrengthWorkout, …)
+│   ├── schemas.py          # Pydantic схемы запросов/ответов
 │   ├── routers/
-│   │   ├── __init__.py
-│   │   ├── auth.py           # Роуты регистрации, логина, обновления токена
-│   │   ├── cardio.py         # CRUD для кардио + интервалов
-│   │   ├── strength.py       # CRUD для силовых
-│   │   └── statistics.py     # Статистика по бегу
-│   ├── dependencies.py       # Зависимости: получение текущего пользователя, проверка JWT
-│   ├── utils/
-│   │   ├── security.py       # Хеширование пароля, создание/проверка JWT
-│   │   └── __init__.py
-│   └── templates/            # Jinja2 шаблоны
-│       ├── base.html
-│       ├── login.html
-│       ├── register.html
-│       └── dashboard.html    # Основная страница со списком тренировок и формами
-├── static/
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── app.js             # fetch‑запросы для CRUD
-│   ├── manifest.json          # PWA манифест
-│   ├── sw.js                  # Service Worker (базовый кеш)
-│   └── icons/                 # Иконки 192x192, 512x512
-├── alembic/                   # Миграции (генерируются alembic init)
-│   └── ...
+│   │   ├── auth.py         # /api/auth: register, login, refresh, logout
+│   │   ├── cardio.py       # /api/cardio: CRUD + bulk delete
+│   │   ├── strength.py     # /api/strength: CRUD + bulk delete
+│   │   └── statistics.py   # /api/stats: недельная/месячная статистика
+│   ├── dependencies.py     # Зависимости: JWT auth, пагинация
+│   └── utils/
+│       ├── security.py     # bcrypt, JWT, cookie helpers
+│       └── rate_limit.py   # In-memory rate limiter (X-Real-IP)
+├── alembic/                # Миграции БД
+├── tests/                  # pytest тесты (66 тестов)
 ├── alembic.ini
-├── .env                       # Локальные переменные окружения (SECRET_KEY, DATABASE_URL)
-├── pyproject.toml             # Зависимости (uv)
-├── requirements.txt           # Альтернатива/экспорт
-└── README.md
+├── pyproject.toml          # uv-зависимости
+└── Makefile                # run / test / lint / migrate
+```
+
+## API
+
+| Endpoint               | Описание                |
+|------------------------|-------------------------|
+| `POST /api/auth/register` | Регистрация          |
+| `POST /api/auth/login`    | Вход (access + refresh в куки) |
+| `POST /api/auth/refresh`  | Refresh токена        |
+| `POST /api/auth/logout`   | Выход                 |
+| `GET /api/auth/me`        | Текущий пользователь  |
+| `CRUD /api/cardio`        | Кардиотренировки      |
+| `CRUD /api/strength`      | Силовые тренировки    |
+| `GET /api/stats/running`  | Беговая статистика    |
