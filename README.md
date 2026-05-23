@@ -57,7 +57,7 @@ make lint                   # ruff check
 | `POST /api/auth/register` | Регистрация          |
 | `POST /api/auth/login`    | Вход (access + refresh в куки) |
 | `POST /api/auth/refresh`  | Refresh токена        |
-| `POST /api/auth/logout`   | Выход                 |
+| `POST /api/auth/logout`   | Выход (refresh token удаляется, access token живёт до expiry — ~15 мин, stateless JWT) |
 | `GET /api/auth/me`        | Текущий пользователь  |
 | `CRUD /api/cardio`        | Кардиотренировки      |
 | `CRUD /api/strength`      | Силовые тренировки    |

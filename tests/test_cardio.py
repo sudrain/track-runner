@@ -158,6 +158,67 @@ class TestUpdateCardio:
 
 
 @pytest.mark.asyncio
+class TestPatchCardio:
+    async def test_patch_success(self, auth_client: AsyncClient):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await auth_client.patch(
+            f"/api/cardio/{workout_id}",
+            json={
+                "name": "Evening Run",
+                "notes": "Patched notes",
+                "intervals": [
+                    {
+                        "duration_minutes": 20.0,
+                        "distance_km": 3.0,
+                    }
+                ],
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["name"] == "Evening Run"
+        assert data["notes"] == "Patched notes"
+        assert len(data["intervals"]) == 1
+        assert data["intervals"][0]["distance_km"] == 3.0
+
+    async def test_patch_partial(self, auth_client: AsyncClient):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await auth_client.patch(
+            f"/api/cardio/{workout_id}",
+            json={"notes": "Just notes patch"},
+        )
+        assert response.status_code == 200
+        assert response.json()["notes"] == "Just notes patch"
+
+    async def test_patch_not_found(self, auth_client: AsyncClient):
+        response = await auth_client.patch(
+            "/api/cardio/99999",
+            json={"name": "Doesn't matter"},
+        )
+        assert response.status_code == 404
+
+    async def test_patch_unauthorized(self, client: AsyncClient):
+        response = await client.patch(
+            "/api/cardio/1",
+            json={"name": "Hacked"},
+        )
+        assert response.status_code == 401
+
+    async def test_patch_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.patch(
+            f"/api/cardio/{workout_id}",
+            json={"name": "Stolen"},
+        )
+        assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 class TestDeleteCardio:
     async def test_delete_success(self, auth_client: AsyncClient):
         post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)

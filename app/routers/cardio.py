@@ -94,6 +94,7 @@ async def get_cardio_workout(
 
 # Обновление (замена интервалов)
 @router.put("/{workout_id}", response_model=CardioWorkoutOut)
+@router.patch("/{workout_id}", response_model=CardioWorkoutOut)
 async def update_cardio_workout(
     workout_id: int,
     data: CardioWorkoutUpdate,

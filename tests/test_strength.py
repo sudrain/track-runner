@@ -149,6 +149,65 @@ class TestUpdateStrength:
 
 
 @pytest.mark.asyncio
+class TestPatchStrength:
+    async def test_patch_success(self, auth_client: AsyncClient):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await auth_client.patch(
+            f"/api/strength/{workout_id}",
+            json={
+                "notes": "Patched leg day",
+                "exercises": [
+                    {
+                        "name": "Leg Press",
+                        "sets": [{"weight_kg": 120.0, "repetitions": 10}],
+                    }
+                ],
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["notes"] == "Patched leg day"
+        assert len(data["exercises"]) == 1
+        assert data["exercises"][0]["name"] == "Leg Press"
+
+    async def test_patch_partial(self, auth_client: AsyncClient):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await auth_client.patch(
+            f"/api/strength/{workout_id}",
+            json={"notes": "Just notes patch"},
+        )
+        assert response.status_code == 200
+        assert response.json()["notes"] == "Just notes patch"
+
+    async def test_patch_not_found(self, auth_client: AsyncClient):
+        response = await auth_client.patch(
+            "/api/strength/99999",
+            json={"notes": "Nope"},
+        )
+        assert response.status_code == 404
+
+    async def test_patch_unauthorized(self, client: AsyncClient):
+        response = await client.patch(
+            "/api/strength/1",
+            json={"notes": "Hacked"},
+        )
+        assert response.status_code == 401
+
+    async def test_patch_other_users_workout(
+        self, auth_client: AsyncClient, second_auth_client: AsyncClient
+    ):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        response = await second_auth_client.patch(
+            f"/api/strength/{workout_id}",
+            json={"notes": "Stolen"},
+        )
+        assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 class TestDeleteStrength:
     async def test_delete_success(self, auth_client: AsyncClient):
         post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)

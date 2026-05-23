@@ -103,6 +103,7 @@ async def get_strength_workout(
 
 
 @router.put("/{workout_id}", response_model=StrengthWorkoutOut)
+@router.patch("/{workout_id}", response_model=StrengthWorkoutOut)
 async def update_strength_workout(
     workout_id: int,
     data: StrengthWorkoutUpdate,
