@@ -1,5 +1,6 @@
+from collections.abc import AsyncGenerator
+
 from fastapi import Depends, HTTPException, Request, status
-from sqlalchemy import select  # noqa: F401
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import AsyncSessionLocal
@@ -7,10 +8,10 @@ from app.models import User
 from app.utils.security import decode_token
 
 
-async def get_db() -> AsyncSession:  # type: ignore
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Создаёт сессию БД для каждого запроса и закрывает после."""
     async with AsyncSessionLocal() as session:
-        yield session  # pyright: ignore[reportReturnType]
+        yield session
 
 
 async def get_current_user(

@@ -115,9 +115,9 @@ async def update_strength_workout(
         raise HTTPException(status_code=404, detail="Workout not found")
 
     if data.datetime is not None:
-        workout.datetime = data.datetime  # type: ignore
+        workout.datetime = data.datetime  # type: ignore[assignment]
     if data.notes is not None:
-        workout.notes = data.notes  # type: ignore
+        workout.notes = data.notes  # type: ignore[assignment]
 
     if data.exercises is not None:
         # Удаляем старые упражнения (каскад удалит подходы)

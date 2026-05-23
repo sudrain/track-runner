@@ -24,6 +24,5 @@ target-version = "py312"
 
 [dependency-groups]
 dev = [
-    "odfpy>=1.4.1",
     "pytest>=9.0.3",
 ]

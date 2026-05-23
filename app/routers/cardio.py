@@ -110,9 +110,9 @@ async def update_cardio_workout(
 
     # Частичное обновление полей
     if data.name is not None:
-        workout.name = data.name  # type: ignore
+        workout.name = data.name  # type: ignore[assignment]
     if data.datetime is not None:
-        workout.datetime = data.datetime  # type: ignore
+        workout.datetime = data.datetime  # type: ignore[assignment]
     if data.notes is not None:
         workout.notes = data.notes
 

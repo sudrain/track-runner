@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field, model_validator  # noqa: F401
+from pydantic import BaseModel, EmailStr, Field
 
 
 # ---------- Пользователь ----------

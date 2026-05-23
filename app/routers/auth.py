@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies import get_current_user, get_db
 from app.models import User
 from app.schemas import TokenOut, UserLogin, UserOut, UserRegister
+from app.utils.rate_limit import rate_limit
 from app.utils.security import (
     create_access_token,
     create_refresh_token,
@@ -19,7 +20,11 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post(
     "/register", response_model=UserOut, status_code=status.HTTP_201_CREATED
 )
-async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
+async def register(
+    data: UserRegister,
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(rate_limit(max_requests=5, window_seconds=300)),
+):
     # Проверка, существует ли email
     existing = await db.execute(select(User).where(User.email == data.email))
     if existing.scalar_one_or_none():
@@ -38,7 +43,10 @@ async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login", response_model=TokenOut)
 async def login(
-    data: UserLogin, response: Response, db: AsyncSession = Depends(get_db)
+    data: UserLogin,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(rate_limit(max_requests=10, window_seconds=300)),
 ):
     user = await db.execute(select(User).where(User.email == data.email))
     user = user.scalar_one_or_none()
