@@ -19,7 +19,8 @@ make migrate                # автогенерация + apply
 ## Тесты и линтинг
 
 ```bash
-make test                   # pytest
+make check                  # ruff + pytest (все сразу)
+make test                   # pytest (101 тестов)
 make lint                   # ruff check
 ```
 
@@ -37,13 +38,13 @@ make lint                   # ruff check
 │   │   ├── auth.py         # /api/auth: register, login, refresh, logout
 │   │   ├── cardio.py       # /api/cardio: CRUD + bulk delete
 │   │   ├── strength.py     # /api/strength: CRUD + bulk delete
-│   │   └── statistics.py   # /api/stats: недельная/месячная статистика
+│   │   └── statistics.py   # /api/statistics/running: недельная/месячная статистика
 │   ├── dependencies.py     # Зависимости: JWT auth, пагинация
 │   └── utils/
 │       ├── security.py     # bcrypt, JWT, cookie helpers
 │       └── rate_limit.py   # In-memory rate limiter (X-Real-IP)
 ├── alembic/                # Миграции БД
-├── tests/                  # pytest тесты (66 тестов)
+├── tests/                  # pytest тесты (101 тест)
 ├── alembic.ini
 ├── pyproject.toml          # uv-зависимости
 └── Makefile                # run / test / lint / migrate
@@ -60,4 +61,4 @@ make lint                   # ruff check
 | `GET /api/auth/me`        | Текущий пользователь  |
 | `CRUD /api/cardio`        | Кардиотренировки      |
 | `CRUD /api/strength`      | Силовые тренировки    |
-| `GET /api/stats/running`  | Беговая статистика    |
+| `GET /api/statistics/running` | Беговая статистика |
