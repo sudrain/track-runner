@@ -113,6 +113,8 @@ async def update_cardio_workout(
         workout.name = data.name  # type: ignore
     if data.datetime is not None:
         workout.datetime = data.datetime  # type: ignore
+    if data.notes is not None:
+        workout.notes = data.notes
 
     # Если переданы новые интервалы, удаляем старые и создаём новые
     if data.intervals is not None:
