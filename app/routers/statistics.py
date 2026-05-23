@@ -23,7 +23,6 @@ def _week_range(today: datetime):
 def _month_range(today: datetime):
     """Возвращает первый день месяца и последний день месяца (начало/конец дня)."""
     first_day = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    # Вычисляем последний день месяца (можно через calendar, но для простоты next_month - 1 сек)
     next_month = (first_day.replace(day=28) + timedelta(days=4)).replace(day=1)
     last_day = next_month - timedelta(seconds=1)
     return first_day, last_day
@@ -34,7 +33,7 @@ async def running_stats(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    now = datetime.now(timezone.utc)
     week_start, week_end = _week_range(now)
     month_start, month_end = _month_range(now)
 

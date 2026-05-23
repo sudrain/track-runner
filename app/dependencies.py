@@ -1,11 +1,21 @@
 from collections.abc import AsyncGenerator
 
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, HTTPException, Query, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import AsyncSessionLocal
 from app.models import User
 from app.utils.security import decode_token
+
+
+class PaginatedParams:
+    def __init__(
+        self,
+        offset: int = Query(default=0, ge=0, description="Смещение"),
+        limit: int = Query(default=50, ge=1, le=200, description="Лимит"),
+    ):
+        self.offset = offset
+        self.limit = limit
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:

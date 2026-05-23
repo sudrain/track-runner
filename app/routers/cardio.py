@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import delete as sa_delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.dependencies import get_current_user, get_db
+from app.dependencies import get_current_user, get_db, PaginatedParams
 from app.models import CardioInterval, CardioWorkout, User
 from app.schemas import (
     CardioWorkoutCreate,
@@ -57,12 +57,15 @@ async def create_cardio_workout(
 async def list_cardio_workouts(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    pagination: PaginatedParams = Depends(),
 ):
     result = await db.execute(
         select(CardioWorkout)
         .where(CardioWorkout.user_id == current_user.id)
         .options(selectinload(CardioWorkout.intervals))
         .order_by(CardioWorkout.datetime.desc())
+        .offset(pagination.offset)
+        .limit(pagination.limit)
     )
     return result.scalars().all()
 
@@ -118,8 +121,11 @@ async def update_cardio_workout(
 
     # Если переданы новые интервалы, удаляем старые и создаём новые
     if data.intervals is not None:
-        for interval in workout.intervals:
-            await db.delete(interval)
+        await db.execute(
+            sa_delete(CardioInterval).where(
+                CardioInterval.workout_id == workout.id
+            )
+        )
         for interval_data in data.intervals:
             new_interval = CardioInterval(
                 workout=workout,

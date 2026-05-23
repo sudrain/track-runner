@@ -12,7 +12,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-# from sqlalchemy.sql import func
 from app.database import Base
 
 
@@ -27,7 +26,7 @@ class User(Base):
     id = Column(String(36), primary_key=True, default=generate_uuid)
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     # relations
     cardio_workouts = relationship(
@@ -48,7 +47,7 @@ class CardioWorkout(Base):
         nullable=False,
     )
     name = Column(String(100), nullable=False)  #  "Бег", "Интервалы"
-    datetime = Column(DateTime, nullable=False)  # дата+время тренировки
+    datetime = Column(DateTime(timezone=True), nullable=False)  # дата+время тренировки
     notes = Column(Text, default="")
 
     user = relationship("User", back_populates="cardio_workouts")
@@ -85,7 +84,7 @@ class StrengthWorkout(Base):
         nullable=False,
         index=True,
     )
-    datetime = Column(DateTime, nullable=False)
+    datetime = Column(DateTime(timezone=True), nullable=False)
     notes = Column(Text, default="")
 
     user = relationship("User", back_populates="strength_workouts")
@@ -126,3 +125,20 @@ class Set(Base):
     repetitions = Column(Integer, nullable=False)  # количество повторений
 
     exercise = relationship("Exercise", back_populates="sets")
+
+
+class RevokedRefreshToken(Base):
+    __tablename__ = "revoked_refresh_tokens"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    token_jti = Column(String(36), unique=True, nullable=False, index=True)
+    revoked_at = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    expires_at = Column(DateTime(timezone=True), nullable=False)

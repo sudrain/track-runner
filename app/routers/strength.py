@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import delete as sa_delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.dependencies import get_current_user, get_db
+from app.dependencies import get_current_user, get_db, PaginatedParams
 from app.models import Exercise, Set, StrengthWorkout, User
 from app.schemas import (
     StrengthWorkoutCreate,
@@ -59,6 +59,7 @@ async def create_strength_workout(
 async def list_strength_workouts(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    pagination: PaginatedParams = Depends(),
 ):
     result = await db.execute(
         select(StrengthWorkout)
@@ -67,6 +68,8 @@ async def list_strength_workouts(
             selectinload(StrengthWorkout.exercises).selectinload(Exercise.sets)
         )
         .order_by(StrengthWorkout.datetime.desc())
+        .offset(pagination.offset)
+        .limit(pagination.limit)
     )
     return result.scalars().all()
 
@@ -121,8 +124,9 @@ async def update_strength_workout(
 
     if data.exercises is not None:
         # Удаляем старые упражнения (каскад удалит подходы)
-        for ex in workout.exercises:
-            await db.delete(ex)
+        await db.execute(
+            sa_delete(Exercise).where(Exercise.workout_id == workout.id)
+        )
         for ex_data in data.exercises:
             new_ex = Exercise(
                 workout=workout,
