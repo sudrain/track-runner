@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cardio, type CardioIntervalOut } from '../lib/stores/workouts.svelte'
+  import { cardio, type CardioIntervalOut, type CardioWorkoutOut } from '../lib/stores/workouts.svelte'
   import { navigate } from '../lib/router'
   import Pagination from '../lib/components/Pagination.svelte'
   import { formatDateShort } from '../lib/utils/format'

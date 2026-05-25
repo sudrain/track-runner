@@ -34,7 +34,7 @@ def create_access_token(
     expire = datetime.now(UTC) + (
         expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
-    to_encode.update({"exp": expire, "aud": JWT_AUDIENCE})
+    to_encode.update({"exp": expire, "aud": JWT_AUDIENCE, "type": "access"})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -55,7 +55,8 @@ def create_refresh_token(data: dict) -> str:
 def decode_token(token: str) -> dict | None:
     try:
         return jwt.decode(
-            token, SECRET_KEY, algorithms=[ALGORITHM], audience=JWT_AUDIENCE
+            token, SECRET_KEY, algorithms=[ALGORITHM], audience=JWT_AUDIENCE,
+            options={"leeway": 30},
         )
     except JWTError:
         return None

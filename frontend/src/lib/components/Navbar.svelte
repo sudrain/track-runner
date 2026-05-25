@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { currentRoute, navigate } from '../router'
+  import { currentRoute, navigate, type Route } from '../router'
   import { auth } from '../stores/auth.svelte'
 
   let route = $derived($currentRoute)
   let mobileOpen = $state(false)
 
-  function nav(to: string, opts?: { id?: number }) {
+  function nav(to: Route['name'], opts?: { id?: number }) {
     mobileOpen = false
     navigate(to, opts)
   }
@@ -40,7 +40,7 @@
         </button>
         <button
           class="bg-indigo-600 hover:bg-indigo-500 border border-indigo-400 px-3 py-1 rounded"
-          onclick={auth.logout}
+          onclick={() => auth.logout()}
         >
           Logout
         </button>
