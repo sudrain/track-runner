@@ -107,7 +107,7 @@
   <div>
     <div class="flex items-center justify-between mb-2">
       <span class="text-base font-medium text-gray-700">Intervals</span>
-      <button type="button" onclick={addInterval} class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+      <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
         + Add interval
       </button>
     </div>
@@ -184,11 +184,11 @@
     ></textarea>
   </div>
 
-  <div class="flex gap-3 pt-1">
+  <div class="flex gap-2 pt-1">
     <button
       type="submit"
       disabled={!valid}
-      class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="flex-1 bg-indigo-600 text-white rounded-lg py-3 text-base font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       Save
     </button>
@@ -196,7 +196,7 @@
       <button
         type="button"
         onclick={oncancel}
-        class="bg-gray-100 text-gray-700 rounded-lg px-5 py-3 text-base font-medium hover:bg-gray-200"
+        class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-3 text-base font-medium hover:bg-gray-200"
       >
         Cancel
       </button>
