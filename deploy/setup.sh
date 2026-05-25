@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Track-Runner deploy script (IP-based, no HTTPS)
+# Track-Runner deploy script (backend + frontend)
 # Требует: uv sync --no-dev уже выполнен от пользователя
 # Usage: cd /opt/track-runner && sudo bash deploy/setup.sh
 set -euo pipefail
@@ -38,6 +38,27 @@ sed -i "s|sqlite+aiosqlite:///./dev.db|postgresql+asyncpg://$DB_USER:$DB_PASS@lo
 sed -i "s/<IP-АДРЕС-ВАШЕЙ-VPS>/$VPS_IP/" .env
 sed -i "s/TRUSTED_PROXY=false/TRUSTED_PROXY=true/" .env
 
+echo "[*] Installing Node.js via nvm (user $SERVICE_USER)..."
+if ! sudo -u "$SERVICE_USER" command -v node &>/dev/null; then
+    sudo -u "$SERVICE_USER" bash -c '
+        export NVM_DIR="$HOME/.nvm"
+        if [ ! -d "$NVM_DIR" ]; then
+            curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+        fi
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm install 24
+    '
+fi
+
+echo "[*] Building frontend..."
+sudo -u "$SERVICE_USER" bash -c "
+    export NVM_DIR=\"\$HOME/.nvm\"
+    [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"
+    cd \"$APP_DIR/frontend\"
+    npm ci
+    npm run build
+"
+
 echo "[*] Installing systemd service..."
 systemctl stop $APP_NAME 2>/dev/null || true
 sed -e "s|__APP_DIR__|$APP_DIR|g" \
@@ -60,6 +81,7 @@ cd "$APP_DIR"
 sudo -u "$SERVICE_USER" "$APP_DIR/.venv/bin/python" -m alembic upgrade head
 
 echo "[v] Deploy complete!"
+echo "  App:   http://$VPS_IP/"
 echo "  API:   http://$VPS_IP/health"
 echo "  Logs:  journalctl -u $APP_NAME -f"
 echo "  DB:    $APP_NAME@localhost"

@@ -5,6 +5,7 @@ set -euo pipefail
 
 APP_DIR="/opt/track-runner"
 APP_NAME="track-runner"
+APP_USER="sudrain"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
@@ -34,11 +35,20 @@ echo "[*] Checking out $TARGET..."
 git fetch origin
 git checkout "$TARGET"
 
-echo "[*] Updating dependencies..."
-sudo -u trackrunner "$APP_DIR/.venv/bin/uv" sync --no-dev
+echo "[*] Updating backend dependencies..."
+sudo -u "$APP_USER" "$APP_DIR/.venv/bin/uv" sync --no-dev
+
+echo "[*] Rebuilding frontend..."
+sudo -u "$APP_USER" bash -c "
+    export NVM_DIR=\"\$HOME/.nvm\"
+    [ -s \"\$NVM_DIR/nvm.sh\" ] && \. \"\$NVM_DIR/nvm.sh\"
+    cd \"$APP_DIR/frontend\"
+    npm ci
+    npm run build
+"
 
 echo "[*] Running migrations..."
-sudo -u trackrunner "$APP_DIR/.venv/bin/uv" run alembic upgrade head
+sudo -u "$APP_USER" "$APP_DIR/.venv/bin/uv" run alembic upgrade head
 
 echo "[*] Restarting service..."
 systemctl restart $APP_NAME
