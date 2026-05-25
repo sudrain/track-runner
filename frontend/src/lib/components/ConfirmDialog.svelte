@@ -13,8 +13,10 @@
     tabindex="-1"
   >
     <div
+      role="none"
       class="bg-white rounded-xl shadow-xl p-6 mx-4 max-w-sm w-full"
       onclick={(e) => e.stopPropagation()}
+      onkeydown={() => {}}
     >
       <p class="text-gray-800 text-sm">{state.message}</p>
       <div class="flex justify-end gap-3 mt-6">

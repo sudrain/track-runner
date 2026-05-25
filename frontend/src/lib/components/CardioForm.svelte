@@ -121,8 +121,8 @@
 
     <div class="space-y-2">
       {#each intervals as interval, i}
-        <div class="flex items-end gap-2">
-          <div class="flex-1">
+        <div class="flex items-end gap-2 flex-wrap">
+          <div class="flex-1 min-w-[100px]">
             <label for="duration-{i}" class="block text-xs text-gray-500 mb-0.5">Duration (min)</label>
             <input
               id="duration-{i}"
@@ -134,7 +134,7 @@
               class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="flex-1">
+          <div class="flex-1 min-w-[80px]">
             <label for="distance-{i}" class="block text-xs text-gray-500 mb-0.5">Distance (km)</label>
             <input
               id="distance-{i}"
@@ -146,10 +146,10 @@
               class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="w-14 text-center pt-5 text-xs text-gray-400">
+          <div class="w-14 text-center sm:pt-5 text-xs text-gray-400 self-center sm:self-auto">
             {intervalTempo(interval)}
           </div>
-          <div class="flex-1">
+          <div class="flex-1 min-w-[80px]">
             <label for="hr-{i}" class="block text-xs text-gray-500 mb-0.5">HR (bpm)</label>
             <input
               id="hr-{i}"

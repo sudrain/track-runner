@@ -54,18 +54,18 @@
 
 {#if auth.user}
   <div>
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
       <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-      <div class="flex gap-2">
+      <div class="flex gap-3 sm:gap-2">
         <button
           onclick={() => navigate('cardio-new')}
-          class="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+          class="flex-1 sm:flex-none bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
         >
           + Cardio
         </button>
         <button
           onclick={() => navigate('strength-new')}
-          class="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+          class="flex-1 sm:flex-none bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
         >
           + Strength
         </button>
@@ -77,21 +77,21 @@
     {:else if stats.error}
       <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{stats.error}</div>
     {:else if stats.data}
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4">
           <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Week</p>
-          <p class="text-3xl font-bold text-indigo-600">{stats.data.week_km.toFixed(2)} km</p>
-          <p class="text-sm text-gray-400 mt-2">{formatTempoShort(stats.data.week_avg_tempo)} /km</p>
+          <p class="text-xl sm:text-2xl font-bold text-indigo-600">{stats.data.week_km.toFixed(1)} km</p>
+          <p class="text-xs text-gray-400 mt-1">{formatTempoShort(stats.data.week_avg_tempo)} /km</p>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4">
           <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Month</p>
-          <p class="text-3xl font-bold text-indigo-600">{stats.data.month_km.toFixed(2)} km</p>
-          <p class="text-sm text-gray-400 mt-2">{formatTempoShort(stats.data.month_avg_tempo)} /km</p>
+          <p class="text-xl sm:text-2xl font-bold text-indigo-600">{stats.data.month_km.toFixed(1)} km</p>
+          <p class="text-xs text-gray-400 mt-1">{formatTempoShort(stats.data.month_avg_tempo)} /km</p>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4">
           <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Year</p>
-          <p class="text-3xl font-bold text-indigo-600">{stats.data.year_km.toFixed(2)} km</p>
-          <p class="text-sm text-gray-400 mt-2">{formatTempoShort(stats.data.year_avg_tempo)} /km</p>
+          <p class="text-xl sm:text-2xl font-bold text-indigo-600">{stats.data.year_km.toFixed(1)} km</p>
+          <p class="text-xs text-gray-400 mt-1">{formatTempoShort(stats.data.year_avg_tempo)} /km</p>
         </div>
       </div>
     {/if}
@@ -99,8 +99,8 @@
     {#if recentLoading}
       <div class="text-gray-400 text-center py-6 text-sm">Loading recent workouts...</div>
     {:else}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
           <h2 class="text-sm font-semibold text-gray-700 mb-3">Recent Cardio</h2>
           {#if recentCardio.length === 0}
             <p class="text-gray-400 text-sm">No cardio workouts yet</p>

@@ -142,7 +142,7 @@
 
           {#each exercise.sets as set, setIndex}
             <div class="flex items-end gap-2 mb-1">
-              <div>
+              <div class="flex-1 min-w-[80px]">
                 <label for="weight-{exIndex}-{setIndex}" class="block text-xs text-gray-500 mb-0.5">Weight (kg)</label>
                 <input
                   id="weight-{exIndex}-{setIndex}"
@@ -151,10 +151,10 @@
                   min="0"
                   bind:value={set.weight_kg}
                   placeholder="80"
-                  class="w-28 border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
-              <div>
+              <div class="flex-1 min-w-[60px]">
                 <label for="reps-{exIndex}-{setIndex}" class="block text-xs text-gray-500 mb-0.5">Reps</label>
                 <input
                   id="reps-{exIndex}-{setIndex}"
@@ -162,7 +162,7 @@
                   min="1"
                   bind:value={set.repetitions}
                   placeholder="10"
-                  class="w-20 border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
               <button
