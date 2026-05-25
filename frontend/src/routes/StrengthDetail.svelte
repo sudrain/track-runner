@@ -5,6 +5,8 @@
   import StrengthForm from '../lib/components/StrengthForm.svelte'
   import ExerciseList from '../lib/components/ExerciseList.svelte'
   import { formatDateShort } from '../lib/utils/format'
+  import { showConfirm } from '../lib/stores/confirm.svelte'
+  import { showToast } from '../lib/stores/toast.svelte'
 
   let { id } = $props<{ id: number }>()
 
@@ -21,6 +23,7 @@
     error = null
     try {
       await strength.update(id, data)
+      showToast('Workout updated')
       editing = false
     } catch (e) {
       error = e instanceof ApiError ? e.detail : 'Failed to update workout'
@@ -30,9 +33,14 @@
   }
 
   async function handleDelete() {
-    if (confirm('Delete this workout?')) {
+    const ok = await showConfirm('Delete this workout?')
+    if (!ok) return
+    try {
       await strength.remove(id)
+      showToast('Workout deleted')
       navigate('strength')
+    } catch {
+      showToast('Failed to delete workout', 'error')
     }
   }
 

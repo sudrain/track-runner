@@ -3,6 +3,8 @@
   import { navigate } from '../lib/router'
   import Pagination from '../lib/components/Pagination.svelte'
   import { formatDateShort } from '../lib/utils/format'
+  import { showConfirm } from '../lib/stores/confirm.svelte'
+  import { showToast } from '../lib/stores/toast.svelte'
 
   let offset = $state(0)
   let limit = 20
@@ -16,9 +18,14 @@
   }
 
   async function deleteWorkout(id: number) {
-    if (confirm('Delete this workout?')) {
+    const ok = await showConfirm('Delete this workout?')
+    if (!ok) return
+    try {
       await strength.remove(id)
+      showToast('Workout deleted')
       strength.fetchList(offset, limit)
+    } catch {
+      showToast('Failed to delete workout', 'error')
     }
   }
 

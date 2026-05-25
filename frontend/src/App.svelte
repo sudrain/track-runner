@@ -1,5 +1,7 @@
 <script lang="ts">
   import Layout from './lib/components/Layout.svelte'
+  import Toast from './lib/components/Toast.svelte'
+  import ConfirmDialog from './lib/components/ConfirmDialog.svelte'
   import { onMount } from 'svelte'
   import { currentRoute, navigate, parseHash } from './lib/router'
   import { auth } from './lib/stores/auth.svelte'
@@ -31,6 +33,8 @@
     Loading...
   </div>
 {:else}
+  <Toast />
+  <ConfirmDialog />
   <Layout>
     {#if route.name === 'home'}
       <Home />

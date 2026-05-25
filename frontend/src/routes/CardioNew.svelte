@@ -3,6 +3,7 @@
   import { ApiError } from '../lib/api/client'
   import { navigate } from '../lib/router'
   import CardioForm from '../lib/components/CardioForm.svelte'
+  import { showToast } from '../lib/stores/toast.svelte'
 
   let saving = $state(false)
   let error = $state<string | null>(null)
@@ -12,6 +13,7 @@
     error = null
     try {
       const workout = await cardio.create(data)
+      showToast('Workout created')
       navigate('cardio-detail', { id: workout.id })
     } catch (e) {
       error = e instanceof ApiError ? e.detail : 'Failed to create workout'
