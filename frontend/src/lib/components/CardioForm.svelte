@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { CardioWorkoutOut, CardioWorkoutCreate, CardioIntervalOut } from '../stores/workouts.svelte'
+  import { cardio } from '../stores/workouts.svelte'
   import { toDatetimeLocal, fromDatetimeLocal } from '../utils/format'
   import { parseTempo, computeTempo, formatTempoNumber } from '../utils/tempo'
 
@@ -43,6 +44,8 @@
     }
   })
 
+  $effect(() => { cardio.fetchTemplates() })
+
   function addInterval() {
     intervals = [...intervals, { duration_minutes: '', distance_km: '', tempo: '', avg_heart_rate: '' }]
   }
@@ -85,13 +88,23 @@
 </script>
 
 <form onsubmit={handleSubmit} class="space-y-3">
-  <input
-    id="cardio-name"
-    type="text"
-    bind:value={name}
-    required
-    class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
-  />
+  {#if cardio.templatesLoading}
+    <select disabled class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base bg-gray-100 text-gray-400">
+      <option>Loading...</option>
+    </select>
+  {:else}
+    <select
+      id="cardio-name"
+      bind:value={name}
+      required
+      class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    >
+      <option value="" disabled>Select workout type...</option>
+      {#each cardio.templates as tpl (tpl.id)}
+        <option value={tpl.name}>{tpl.name}</option>
+      {/each}
+    </select>
+  {/if}
 
   <input
     id="cardio-datetime"

@@ -9,6 +9,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
 
@@ -129,9 +130,13 @@ class Set(Base):
 
 class ExerciseTemplate(Base):
     __tablename__ = "exercise_templates"
+    __table_args__ = (
+        UniqueConstraint("name", "type", name="uq_exercise_template_name_type"),
+    )
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), unique=True, nullable=False)
+    name = Column(String(100), nullable=False)
+    type = Column(String(20), nullable=False)
 
 
 class RevokedRefreshToken(Base):

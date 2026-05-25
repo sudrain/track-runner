@@ -40,7 +40,7 @@
     }
   })
 
-  $effect(() => { strength.fetchTemplates() })
+  $effect(() => { strength.fetchTemplates('strength') })
 
   function addExercise() {
     exercises = [...exercises, { name: '', sets: [{ weight_kg: '', repetitions: '' }] }]

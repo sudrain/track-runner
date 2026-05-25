@@ -85,3 +85,4 @@ echo "  App:   http://$VPS_IP/"
 echo "  API:   http://$VPS_IP/health"
 echo "  Logs:  journalctl -u $APP_NAME -f"
 echo "  DB:    $APP_NAME@localhost"
+
