@@ -153,6 +153,6 @@ class RevokedRefreshToken(Base):
     revoked_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
-        nullable=False,
+        nullable=True,
     )
     expires_at = Column(DateTime(timezone=True), nullable=False)
