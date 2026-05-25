@@ -102,17 +102,17 @@
           <p class="text-sm text-gray-600 mb-4 whitespace-pre-wrap">{w.notes}</p>
         {/if}
 
-        <div class="flex gap-6 mb-4 text-sm">
+        <div class="flex gap-6 mb-4 text-base">
           <div>
-            <span class="text-gray-400">Distance (km)</span>
+            <span class="text-gray-400">Km</span>
             <p class="font-semibold text-gray-800">{totalKm.toFixed(2)}</p>
           </div>
           <div>
-            <span class="text-gray-400">Duration (min)</span>
+            <span class="text-gray-400">Min</span>
             <p class="font-semibold text-gray-800">{totalMin.toFixed(0)}</p>
           </div>
           <div>
-            <span class="text-gray-400">Tempo (/km)</span>
+            <span class="text-gray-400">Tempo</span>
             <p class="font-semibold text-gray-800">{formatTempoShort(tempo)}</p>
           </div>
         </div>

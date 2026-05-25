@@ -63,7 +63,7 @@
       const min = totalMin(w.intervals)
       return `${w.name},${formatDateShort(w.datetime)},${km.toFixed(2)},${min.toFixed(0)},${formatTempoShort(workoutTempo(w.intervals))},${avgHr(w.intervals) ?? ''}`
     })
-    const csv = 'Name,Date,Distance (km),Duration (min),Tempo (/km),HR (bpm)\n' + rows.join('\n')
+    const csv = 'Name,Date,Km,Min,Tempo,HR\n' + rows.join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -135,10 +135,10 @@
           <tr class="border-b border-gray-200 text-left text-gray-500">
             <th onclick={() => toggleSort('name')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Name{sortIcon('name')}</th>
             <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Date{sortIcon('date')}</th>
-            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Distance (km){sortIcon('distance')}</th>
-            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Duration (min){sortIcon('duration')}</th>
-            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Tempo (/km){sortIcon('tempo')}</th>
-            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">HR (bpm){sortIcon('hr')}</th>
+            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Km{sortIcon('distance')}</th>
+            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Min{sortIcon('duration')}</th>
+            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Tempo{sortIcon('tempo')}</th>
+            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">HR{sortIcon('hr')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>

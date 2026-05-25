@@ -33,11 +33,14 @@ async def create_cardio_workout(
     db.add(workout)
     # Добавляем интервалы
     for interval_data in data.intervals:
+        tempo = interval_data.tempo_min_per_km
+        if tempo is None and interval_data.distance_km > 0:
+            tempo = interval_data.duration_minutes / interval_data.distance_km
         interval = CardioInterval(
             workout=workout,
             duration_minutes=interval_data.duration_minutes,
             distance_km=interval_data.distance_km,
-            tempo_min_per_km=interval_data.tempo_min_per_km,
+            tempo_min_per_km=tempo,
             avg_heart_rate=interval_data.avg_heart_rate,
         )
         db.add(interval)
@@ -125,10 +128,13 @@ async def update_cardio_workout(
     if data.intervals is not None:
         workout.intervals.clear()
         for interval_data in data.intervals:
+            tempo = interval_data.tempo_min_per_km
+            if tempo is None and interval_data.distance_km > 0:
+                tempo = interval_data.duration_minutes / interval_data.distance_km
             workout.intervals.append(CardioInterval(
                 duration_minutes=interval_data.duration_minutes,
                 distance_km=interval_data.distance_km,
-                tempo_min_per_km=interval_data.tempo_min_per_km,
+                tempo_min_per_km=tempo,
                 avg_heart_rate=interval_data.avg_heart_rate,
             ))
 

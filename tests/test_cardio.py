@@ -43,7 +43,7 @@ class TestCreateCardio:
         }
         response = await auth_client.post("/api/cardio/", json=data)
         assert response.status_code == 201
-        assert response.json()["intervals"][0]["tempo_min_per_km"] is None
+        assert response.json()["intervals"][0]["tempo_min_per_km"] == 6.25
         assert response.json()["intervals"][0]["avg_heart_rate"] is None
 
     async def test_create_multiple_intervals(self, auth_client: AsyncClient):
