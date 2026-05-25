@@ -1,27 +1,83 @@
 <script lang="ts">
   import { auth } from '../lib/stores/auth.svelte'
   import { stats } from '../lib/stores/stats.svelte'
+  import { navigate } from '../lib/router'
+  import { api } from '../lib/api/client'
+  import { formatDateShort } from '../lib/utils/format'
   import { formatTempoShort } from '../lib/utils/tempo'
+  import type { CardioWorkoutOut, CardioIntervalOut, StrengthWorkoutOut } from '../lib/stores/workouts.svelte'
+
+  let recentCardio = $state<CardioWorkoutOut[]>([])
+  let recentStrength = $state<StrengthWorkoutOut[]>([])
+  let recentLoading = $state(true)
+
+  async function fetchRecent() {
+    recentLoading = true
+    try {
+      const [cardioRes, strengthRes] = await Promise.all([
+        api.get<{ items: CardioWorkoutOut[]; total: number }>('/api/cardio?offset=0&limit=5'),
+        api.get<{ items: StrengthWorkoutOut[]; total: number }>('/api/strength?offset=0&limit=5'),
+      ])
+      recentCardio = cardioRes.items
+      recentStrength = strengthRes.items
+    } catch {
+    } finally {
+      recentLoading = false
+    }
+  }
 
   $effect(() => {
     if (auth.user) {
       stats.fetch()
+      fetchRecent()
     } else {
       stats.data = null
+      recentCardio = []
+      recentStrength = []
     }
   })
+
+  function totalKm(intervals: CardioIntervalOut[]): number {
+    return intervals.reduce((s, i) => s + i.distance_km, 0)
+  }
+
+  function workoutTempo(intervals: CardioIntervalOut[]): number | null {
+    const t = intervals.reduce((s, i) => s + i.duration_minutes, 0)
+    const d = intervals.reduce((s, i) => s + i.distance_km, 0)
+    return d > 0 ? t / d : null
+  }
+
+  function totalVolume(exercises: { sets: { weight_kg: number; repetitions: number }[] }[]): number {
+    return exercises.reduce((s, ex) => s + ex.sets.reduce((ss, set) => ss + set.weight_kg * set.repetitions, 0), 0)
+  }
 </script>
 
 {#if auth.user}
   <div>
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h1>
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+      <div class="flex gap-2">
+        <button
+          onclick={() => navigate('cardio-new')}
+          class="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+        >
+          + Cardio
+        </button>
+        <button
+          onclick={() => navigate('strength-new')}
+          class="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+        >
+          + Strength
+        </button>
+      </div>
+    </div>
 
     {#if stats.loading}
       <div class="text-gray-400 text-center py-12">Loading statistics...</div>
     {:else if stats.error}
-      <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3">{stats.error}</div>
+      <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{stats.error}</div>
     {:else if stats.data}
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
           <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Week</p>
           <p class="text-3xl font-bold text-indigo-600">{stats.data.week_km.toFixed(2)} km</p>
@@ -36,6 +92,60 @@
           <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Year</p>
           <p class="text-3xl font-bold text-indigo-600">{stats.data.year_km.toFixed(2)} km</p>
           <p class="text-sm text-gray-400 mt-2">{formatTempoShort(stats.data.year_avg_tempo)} /km</p>
+        </div>
+      </div>
+    {/if}
+
+    {#if recentLoading}
+      <div class="text-gray-400 text-center py-6 text-sm">Loading recent workouts...</div>
+    {:else}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+          <h2 class="text-sm font-semibold text-gray-700 mb-3">Recent Cardio</h2>
+          {#if recentCardio.length === 0}
+            <p class="text-gray-400 text-sm">No cardio workouts yet</p>
+          {:else}
+            <div class="space-y-2">
+              {#each recentCardio as w}
+                <button
+                  onclick={() => navigate('cardio-detail', { id: w.id })}
+                  class="w-full text-left flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-sm"
+                >
+                  <div>
+                    <span class="font-medium text-gray-800">{w.name}</span>
+                    <span class="text-gray-400 ml-2">{formatDateShort(w.datetime)}</span>
+                  </div>
+                  <span class="text-gray-500">
+                    {totalKm(w.intervals).toFixed(2)} km · {formatTempoShort(workoutTempo(w.intervals))}
+                  </span>
+                </button>
+              {/each}
+            </div>
+          {/if}
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+          <h2 class="text-sm font-semibold text-gray-700 mb-3">Recent Strength</h2>
+          {#if recentStrength.length === 0}
+            <p class="text-gray-400 text-sm">No strength workouts yet</p>
+          {:else}
+            <div class="space-y-2">
+              {#each recentStrength as w}
+                <button
+                  onclick={() => navigate('strength-detail', { id: w.id })}
+                  class="w-full text-left flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-sm"
+                >
+                  <div>
+                    <span class="font-medium text-gray-800">{w.exercises.length} exercises</span>
+                    <span class="text-gray-400 ml-2">{formatDateShort(w.datetime)}</span>
+                  </div>
+                  <span class="text-gray-500">
+                    {totalVolume(w.exercises).toFixed(0)} kg
+                  </span>
+                </button>
+              {/each}
+            </div>
+          {/if}
         </div>
       </div>
     {/if}

@@ -47,6 +47,16 @@
     intervals = intervals.filter((_, i) => i !== index)
   }
 
+  function intervalTempo(interval: typeof intervals[number]): string {
+    const d = parseFloat(interval.duration_minutes)
+    const dist = parseFloat(interval.distance_km)
+    if (!d || !dist) return ''
+    const t = d / dist
+    const min = Math.floor(t)
+    const sec = Math.round((t - min) * 60)
+    return `${min}:${sec.toString().padStart(2, '0')}`
+  }
+
   function handleSubmit(e: Event) {
     e.preventDefault()
     const parsed: CardioWorkoutCreate = {
@@ -135,6 +145,9 @@
               placeholder="5.0"
               class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
+          </div>
+          <div class="w-14 text-center pt-5 text-xs text-gray-400">
+            {intervalTempo(interval)}
           </div>
           <div class="flex-1">
             <label for="hr-{i}" class="block text-xs text-gray-500 mb-0.5">HR (bpm)</label>
