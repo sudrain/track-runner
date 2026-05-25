@@ -34,7 +34,7 @@
     <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
   {/if}
 
-  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-4">
     <StrengthForm onsubmit={handleSubmit} oncancel={handleCancel} />
   </div>
 

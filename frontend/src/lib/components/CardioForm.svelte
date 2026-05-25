@@ -35,7 +35,9 @@
       intervals = mapIntervals(workout.intervals)
     } else {
       name = ''
-      datetime = ''
+      const now = new Date()
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+      datetime = now.toISOString().slice(0, 16)
       notes = ''
       intervals = [{ duration_minutes: '', distance_km: '', tempo: '', avg_heart_rate: '' }]
     }
@@ -82,43 +84,30 @@
   let valid = $derived(name && datetime && intervals.some(i => i.duration_minutes && i.distance_km))
 </script>
 
-<form onsubmit={handleSubmit} class="space-y-4">
+<form onsubmit={handleSubmit} class="space-y-3">
   <div>
-    <label for="cardio-name" class="block text-[13px] font-medium text-gray-700 mb-1">Name</label>
+    <label for="cardio-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
     <input
       id="cardio-name"
       type="text"
       bind:value={name}
       required
-      class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      class="w-full border border-gray-300 rounded-lg px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
     />
   </div>
 
-  <div>
-    <label for="cardio-datetime" class="block text-[13px] font-medium text-gray-700 mb-1">Date & Time</label>
-    <input
-      id="cardio-datetime"
-      type="datetime-local"
-      bind:value={datetime}
-      required
-      class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-    />
-  </div>
-
-  <div>
-    <label for="cardio-notes" class="block text-[13px] font-medium text-gray-700 mb-1">Notes</label>
-    <textarea
-      id="cardio-notes"
-      bind:value={notes}
-      rows="3"
-      class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-    ></textarea>
-  </div>
+  <input
+    id="cardio-datetime"
+    type="datetime-local"
+    bind:value={datetime}
+    required
+    class="w-full border border-gray-300 rounded-lg px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+  />
 
   <div>
     <div class="flex items-center justify-between mb-2">
-      <span class="text-base sm:text-sm font-medium text-gray-700">Intervals</span>
-      <button type="button" onclick={addInterval} class="text-[13px] text-indigo-600 hover:text-indigo-800 font-medium">
+      <span class="text-base font-medium text-gray-700">Intervals</span>
+      <button type="button" onclick={addInterval} class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
         + Add interval
       </button>
     </div>
@@ -127,7 +116,7 @@
       {#each intervals as interval, i}
         <div class="flex items-end gap-2 flex-wrap">
           <div class="flex-1 min-w-[90px]">
-            <label for="duration-{i}" class="block text-[13px] text-gray-500 mb-0.5">Min</label>
+            <label for="duration-{i}" class="block text-sm text-gray-500 mb-0.5">Min</label>
             <input
               id="duration-{i}"
               type="number"
@@ -135,11 +124,11 @@
               min="0"
               bind:value={interval.duration_minutes}
               placeholder="30"
-              class="w-full border border-gray-300 rounded px-2 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div class="flex-1 min-w-[80px]">
-            <label for="distance-{i}" class="block text-[13px] text-gray-500 mb-0.5">Km</label>
+            <label for="distance-{i}" class="block text-sm text-gray-500 mb-0.5">Km</label>
             <input
               id="distance-{i}"
               type="number"
@@ -147,21 +136,21 @@
               min="0"
               bind:value={interval.distance_km}
               placeholder="5.0"
-              class="w-full border border-gray-300 rounded px-2 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div class="w-16 sm:w-18">
-            <label for="tempo-{i}" class="block text-[13px] text-gray-500 mb-0.5">Tempo</label>
+            <label for="tempo-{i}" class="block text-sm text-gray-500 mb-0.5">Tempo</label>
             <input
               id="tempo-{i}"
               type="text"
               bind:value={interval.tempo}
               placeholder={computedTempo(interval) || 'M:SS'}
-              class="w-full border border-gray-300 rounded px-2 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div class="flex-1 min-w-[80px]">
-            <label for="hr-{i}" class="block text-[13px] text-gray-500 mb-0.5">HR</label>
+            <label for="hr-{i}" class="block text-sm text-gray-500 mb-0.5">HR</label>
             <input
               id="hr-{i}"
               type="number"
@@ -169,7 +158,7 @@
               max="250"
               bind:value={interval.avg_heart_rate}
               placeholder="—"
-              class="w-full border border-gray-300 rounded px-2 py-2 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <button
@@ -185,11 +174,21 @@
     </div>
   </div>
 
-  <div class="flex gap-3 pt-2">
+  <div>
+    <label for="cardio-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+    <textarea
+      id="cardio-notes"
+      bind:value={notes}
+      rows="1"
+      class="w-full border border-gray-300 rounded-lg px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
+    ></textarea>
+  </div>
+
+  <div class="flex gap-3 pt-1">
     <button
       type="submit"
       disabled={!valid}
-      class="bg-indigo-600 text-white rounded-lg px-5 py-2.5 text-base sm:text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       Save
     </button>
@@ -197,7 +196,7 @@
       <button
         type="button"
         onclick={oncancel}
-        class="bg-gray-100 text-gray-700 rounded-lg px-5 py-2.5 text-base sm:text-sm font-medium hover:bg-gray-200"
+        class="bg-gray-100 text-gray-700 rounded-lg px-5 py-3 text-base font-medium hover:bg-gray-200"
       >
         Cancel
       </button>
