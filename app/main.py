@@ -13,17 +13,16 @@ from sqlalchemy.exc import ProgrammingError
 
 import app.models
 from alembic import command
-from app.config import AUTO_MIGRATE, CORS_ORIGINS
+from app.config import AUTO_MIGRATE, CORS_ORIGINS, LOG_LEVEL
 from app.database import AsyncSessionLocal, Base, engine
 from app.models import RevokedRefreshToken
 from app.routers import auth, cardio, statistics, strength
 
 logger = logging.getLogger("track-runner")
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logging.getLogger("track-runner").setLevel(logging.DEBUG)
 
 
 def _run_alembic_upgrade():

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
+from app.config import JWT_AUDIENCE
 from app.utils.security import (
-    AUDIENCE,
     create_access_token,
     create_refresh_token,
     decode_token,
@@ -45,7 +45,7 @@ class TestAccessToken:
         assert payload is not None
         assert payload["sub"] == "user-123"
         assert "exp" in payload
-        assert payload["aud"] == AUDIENCE
+        assert payload["aud"] == JWT_AUDIENCE
 
 
 class TestRefreshToken:

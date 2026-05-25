@@ -12,6 +12,13 @@ from pydantic import (
 )
 
 
+def _strip_str(v: str) -> str:
+    stripped = v.strip()
+    if not stripped:
+        raise ValueError("Value cannot be blank")
+    return stripped
+
+
 def _check_password_bytes(v: SecretStr) -> SecretStr:
     if len(v.get_secret_value().encode("utf-8")) > 72:
         raise ValueError("Password too long: bcrypt limit is 72 bytes")
@@ -86,12 +93,21 @@ class CardioWorkoutCreate(BaseModel):
         ..., min_length=1
     )
 
+    _strip_name = field_validator("name")(_strip_str)
+
 
 class CardioWorkoutUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=100)
     datetime: AwareDatetime | None = None
     notes: str | None = None
     intervals: list[CardioIntervalCreate] | None = Field(None, min_length=1)
+
+    @field_validator("name")
+    @classmethod
+    def _strip_name_optional(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        return _strip_str(v)
 
 
 class CardioWorkoutOut(BaseModel):
@@ -120,6 +136,8 @@ class SetOut(BaseModel):
 class ExerciseCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     sets: list[SetCreate] = Field(..., min_length=1)  # хотя бы один подход
+
+    _strip_name = field_validator("name")(_strip_str)
 
 
 class ExerciseOut(BaseModel):

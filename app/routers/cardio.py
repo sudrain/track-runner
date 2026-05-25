@@ -118,7 +118,7 @@ async def update_cardio_workout(
         workout.name = data.name  # type: ignore[assignment]
     if data.datetime is not None:
         workout.datetime = data.datetime  # type: ignore[assignment]
-    if data.notes is not None:
+    if "notes" in data.model_fields_set:
         workout.notes = data.notes
 
     # Если переданы новые интервалы, используем cascade="all, delete-orphan"

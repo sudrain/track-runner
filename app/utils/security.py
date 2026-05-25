@@ -7,6 +7,7 @@ from jose import JWTError, jwt
 from app.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     ALGORITHM,
+    JWT_AUDIENCE,
     REFRESH_TOKEN_EXPIRE_DAYS,
     SECRET_KEY,
 )
@@ -26,9 +27,6 @@ def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 
-AUDIENCE = "track-runner-api"
-
-
 def create_access_token(
     data: dict, expires_delta: timedelta | None = None
 ) -> str:
@@ -36,7 +34,7 @@ def create_access_token(
     expire = datetime.now(UTC) + (
         expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
-    to_encode.update({"exp": expire, "aud": AUDIENCE})
+    to_encode.update({"exp": expire, "aud": JWT_AUDIENCE})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -49,13 +47,15 @@ def create_refresh_token(data: dict) -> str:
         "exp": expire,
         "type": "refresh",
         "jti": uuid.uuid4().hex,
-        "aud": AUDIENCE,
+        "aud": JWT_AUDIENCE,
     })
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def decode_token(token: str) -> dict | None:
     try:
-        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], audience=AUDIENCE)
+        return jwt.decode(
+            token, SECRET_KEY, algorithms=[ALGORITHM], audience=JWT_AUDIENCE
+        )
     except JWTError:
         return None

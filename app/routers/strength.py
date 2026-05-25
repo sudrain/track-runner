@@ -126,11 +126,10 @@ async def update_strength_workout(
 
     if data.datetime is not None:
         workout.datetime = data.datetime  # type: ignore[assignment]
-    if data.notes is not None:
+    if "notes" in data.model_fields_set:
         workout.notes = data.notes  # type: ignore[assignment]
 
     if data.exercises is not None:
-        # Используем cascade="all, delete-orphan" для чистого удаления
         workout.exercises.clear()
         for ex_data in data.exercises:
             exercise = Exercise(name=ex_data.name)
@@ -142,14 +141,7 @@ async def update_strength_workout(
             workout.exercises.append(exercise)
 
     await db.commit()
-    result = await db.execute(
-        select(StrengthWorkout)
-        .where(StrengthWorkout.id == workout.id)
-        .options(
-            selectinload(StrengthWorkout.exercises).selectinload(Exercise.sets)
-        )
-    )
-    workout = result.scalar_one()
+    await db.refresh(workout, ["exercises"])
     return workout
 
 

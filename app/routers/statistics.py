@@ -35,6 +35,30 @@ def _month_range(today: datetime):
     return first_day, next_month
 
 
+def _sum_distance(period_start: datetime, period_end: datetime):
+    return func.coalesce(
+        func.sum(CardioInterval.distance_km).filter(
+            CardioWorkout.datetime >= period_start,
+            CardioWorkout.datetime < period_end,
+        ),
+        0,
+    )
+
+
+def _sum_duration(period_start: datetime, period_end: datetime):
+    return func.coalesce(
+        func.sum(CardioInterval.duration_minutes).filter(
+            CardioWorkout.datetime >= period_start,
+            CardioWorkout.datetime < period_end,
+        ),
+        0,
+    )
+
+
+def _avg_tempo(dist, dur):
+    return case((dist > 0, dur / dist), else_=None)
+
+
 def _year_range(today: datetime):
     """Возвращает первое января года и первое января следующего года (exclusive)."""
     today = _ensure_tz(today)
@@ -52,27 +76,6 @@ async def running_stats(
     week_start, week_end = _week_range(now)
     month_start, month_end = _month_range(now)
     year_start, year_end = _year_range(now)
-
-    def _sum_distance(period_start, period_end):
-        return func.coalesce(
-            func.sum(CardioInterval.distance_km).filter(
-                CardioWorkout.datetime >= period_start,
-                CardioWorkout.datetime < period_end,
-            ),
-            0,
-        )
-
-    def _sum_duration(period_start, period_end):
-        return func.coalesce(
-            func.sum(CardioInterval.duration_minutes).filter(
-                CardioWorkout.datetime >= period_start,
-                CardioWorkout.datetime < period_end,
-            ),
-            0,
-        )
-
-    def _avg_tempo(dist, dur):
-        return case((dist > 0, dur / dist), else_=None)
 
     week_dist = _sum_distance(week_start, week_end)
     month_dist = _sum_distance(month_start, month_end)

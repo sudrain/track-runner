@@ -110,13 +110,12 @@ class TestRefresh:
         # Override exp to be in the past
         from jose import jwt
 
-        from app.config import ALGORITHM, SECRET_KEY
-        from app.utils.security import AUDIENCE
+        from app.config import ALGORITHM, JWT_AUDIENCE, SECRET_KEY
 
         payload = jwt.decode(
             expired, SECRET_KEY,
             algorithms=[ALGORITHM],
-            audience=AUDIENCE,
+            audience=JWT_AUDIENCE,
         )
         payload["exp"] = 0
         tampered = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)

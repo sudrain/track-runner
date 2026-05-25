@@ -26,3 +26,5 @@ DB_ECHO = os.getenv("DB_ECHO", "false").lower() == "true"
 TRUSTED_PROXY = os.getenv("TRUSTED_PROXY", "false").lower() == "true"
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173")
 AUTO_MIGRATE = os.getenv("AUTO_MIGRATE", "true").lower() == "true"
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+JWT_AUDIENCE = os.getenv("JWT_AUDIENCE", "track-runner-api")

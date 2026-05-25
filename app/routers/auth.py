@@ -35,7 +35,7 @@ async def register(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(rate_limit(max_requests=5, window_seconds=300)),
 ):
-    email = unicodedata.normalize("NFKC", data.email).lower()
+    email = unicodedata.normalize("NFKC", data.email).lower().strip()
     existing = await db.execute(select(User).where(User.email == email))
     if existing.scalar_one_or_none():
         raise HTTPException(
@@ -65,7 +65,7 @@ async def login(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(rate_limit(max_requests=10, window_seconds=300)),
 ):
-    email = unicodedata.normalize("NFKC", data.email).lower()
+    email = unicodedata.normalize("NFKC", data.email).lower().strip()
     user = await db.execute(select(User).where(User.email == email))
     user = user.scalar_one_or_none()
     if not user or not verify_password(
