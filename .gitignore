@@ -21,3 +21,5 @@ dev.db
 deploy/.env
 deploy/.env.prod
 /root/.deploy-secrets
+FRONTEND_PLAN.md
+MAINTENANCE.md

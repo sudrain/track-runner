@@ -25,3 +25,4 @@ DB_ECHO = os.getenv("DB_ECHO", "false").lower() == "true"
 # и настроить прокси на передачу X-Real-IP / X-Forwarded-For
 TRUSTED_PROXY = os.getenv("TRUSTED_PROXY", "false").lower() == "true"
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173")
+AUTO_MIGRATE = os.getenv("AUTO_MIGRATE", "true").lower() == "true"

@@ -13,7 +13,7 @@ from sqlalchemy.exc import ProgrammingError
 
 import app.models
 from alembic import command
-from app.config import CORS_ORIGINS
+from app.config import AUTO_MIGRATE, CORS_ORIGINS
 from app.database import AsyncSessionLocal, Base, engine
 from app.models import RevokedRefreshToken
 from app.routers import auth, cardio, statistics, strength
@@ -54,11 +54,12 @@ async def _cleanup_expired_tokens():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    loop = asyncio.get_running_loop()
-    migrated = await loop.run_in_executor(None, _run_alembic_upgrade)
-    if not migrated:
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+    if AUTO_MIGRATE:
+        loop = asyncio.get_running_loop()
+        migrated = await loop.run_in_executor(None, _run_alembic_upgrade)
+        if not migrated:
+            async with engine.begin() as conn:
+                await conn.run_sync(Base.metadata.create_all)
     await _cleanup_expired_tokens()
     yield
 
