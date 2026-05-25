@@ -8,6 +8,12 @@ export function formatDate(iso: string): string {
   })
 }
 
+export function formatDateShort(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`
+}
+
 export function formatDistance(km: number): string {
   if (km >= 1) return `${km.toFixed(2)} km`
   return `${(km * 1000).toFixed(0)} m`
@@ -20,10 +26,13 @@ export function formatDuration(minutes: number): string {
   return `${h}h ${m}min`
 }
 
-export function formatTempo(tempo: number | null): string {
-  if (tempo === null || tempo === undefined) return '—'
-  const totalSec = Math.round(tempo * 60)
-  const min = Math.floor(totalSec / 60)
-  const sec = totalSec % 60
-  return `${min}:${sec.toString().padStart(2, '0')} /km`
+export function toDatetimeLocal(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
+
+export function fromDatetimeLocal(val: string): string {
+  return new Date(val).toISOString()
+}
+
