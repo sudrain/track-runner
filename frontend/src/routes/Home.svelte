@@ -54,21 +54,6 @@
 
 {#if auth.user}
   <div>
-    <div class="flex gap-3 mb-6">
-        <button
-          onclick={() => navigate('cardio-new')}
-          class="flex-1 bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
-        >
-          + Cardio
-        </button>
-        <button
-          onclick={() => navigate('strength-new')}
-          class="flex-1 bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
-        >
-          + Strength
-        </button>
-      </div>
-
     {#if stats.loading}
       <div class="text-gray-400 text-center py-12">Loading statistics...</div>
     {:else if stats.error}
@@ -92,6 +77,21 @@
         </div>
       </div>
     {/if}
+
+    <div class="flex gap-3 mb-8">
+      <button
+        onclick={() => navigate('cardio-new')}
+        class="flex-1 bg-indigo-600 text-white rounded-xl px-8 py-6 sm:px-6 sm:py-4 text-xl sm:text-lg font-bold hover:bg-indigo-700 active:bg-indigo-800 shadow-md"
+      >
+        Cardio
+      </button>
+      <button
+        onclick={() => navigate('strength-new')}
+        class="flex-1 bg-indigo-600 text-white rounded-xl px-8 py-6 sm:px-6 sm:py-4 text-xl sm:text-lg font-bold hover:bg-indigo-700 active:bg-indigo-800 shadow-md"
+      >
+        Strength
+      </button>
+    </div>
 
     {#if recentLoading}
       <div class="text-gray-400 text-center py-6 text-base">Loading recent workouts...</div>

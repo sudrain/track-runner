@@ -117,8 +117,8 @@
   <div>
     <div class="space-y-0.5">
       {#each intervals as interval, i}
-        <div class="flex items-end gap-1.5">
-          <div class="w-16">
+        <div class="flex items-end gap-1.5 md:gap-2">
+          <div class="w-16 md:flex-1 md:min-w-[140px]">
             <label for="duration-{i}" class="block text-base text-gray-500 mb-0.5">Min</label>
             <input
               id="duration-{i}"
@@ -127,10 +127,10 @@
               min="0"
               bind:value={interval.duration_minutes}
               placeholder="30"
-              class="w-full border border-gray-300 rounded px-2 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="w-20">
+          <div class="w-20 md:flex-1 md:min-w-[140px]">
             <label for="distance-{i}" class="block text-base text-gray-500 mb-0.5">Km</label>
             <input
               id="distance-{i}"
@@ -139,20 +139,20 @@
               min="0"
               bind:value={interval.distance_km}
               placeholder="5.0"
-              class="w-full border border-gray-300 rounded px-2 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="w-20">
+          <div class="w-20 md:w-28">
             <label for="tempo-{i}" class="block text-base text-gray-500 mb-0.5">Tempo</label>
             <input
               id="tempo-{i}"
               type="text"
               bind:value={interval.tempo}
               placeholder={computedTempo(interval) || 'M:SS'}
-              class="w-full border border-gray-300 rounded px-2 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="w-16">
+          <div class="w-16 md:flex-1 md:min-w-[100px]">
             <label for="hr-{i}" class="block text-base text-gray-500 mb-0.5">HR</label>
             <input
               id="hr-{i}"
@@ -161,7 +161,7 @@
               max="250"
               bind:value={interval.avg_heart_rate}
               placeholder="—"
-              class="w-full border border-gray-300 rounded px-2 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <button

@@ -148,9 +148,9 @@
 
         <div class="space-y-0.5">
           {#each exercise.sets as set, setIndex}
-            <div class="flex items-end justify-between gap-1.5">
-              <div class="flex gap-1.5 min-w-0">
-                <div class="w-20">
+            <div class="flex items-end justify-between gap-1.5 md:gap-2">
+              <div class="flex gap-1.5 md:gap-2 min-w-0">
+                <div class="w-20 md:flex-1 md:min-w-[140px]">
                   <label for="weight-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Wt,kg</label>
                     <input
                       id="weight-{exIndex}-{setIndex}"
@@ -160,10 +160,10 @@
                       value={set.weight_kg}
                       oninput={(e) => updateSet(exIndex, setIndex, 'weight_kg', (e.target as HTMLInputElement).value)}
                       placeholder="80"
-                      class="w-full border border-gray-300 rounded px-2 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                 </div>
-                <div class="w-16">
+                <div class="w-16 md:flex-1 md:min-w-[100px]">
                   <label for="reps-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Reps</label>
                     <input
                       id="reps-{exIndex}-{setIndex}"
@@ -172,7 +172,7 @@
                       value={set.repetitions}
                       oninput={(e) => updateSet(exIndex, setIndex, 'repetitions', (e.target as HTMLInputElement).value)}
                       placeholder="10"
-                      class="w-full border border-gray-300 rounded px-2 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                 </div>
               </div>
