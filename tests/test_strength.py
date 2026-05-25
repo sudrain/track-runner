@@ -39,6 +39,19 @@ class TestCreateStrength:
         response = await auth_client.post("/api/strength/", json=data)
         assert response.status_code == 422
 
+    async def test_create_single_exercise_single_set(self, auth_client: AsyncClient):
+        data = {
+            "datetime": "2026-05-20T10:00:00Z",
+            "notes": "",
+            "exercises": [
+                {"name": "Push-up", "sets": [{"weight_kg": 1.0, "repetitions": 20}]},
+            ],
+        }
+        response = await auth_client.post("/api/strength/", json=data)
+        assert response.status_code == 201
+        assert len(response.json()["exercises"]) == 1
+        assert len(response.json()["exercises"][0]["sets"]) == 1
+
     async def test_create_unauthorized(self, client: AsyncClient):
         response = await client.post("/api/strength/", json=_WORKOUT_DATA)
         assert response.status_code == 401
@@ -61,6 +74,15 @@ class TestListStrength:
         assert data["total"] == 1
         assert len(data["items"]) == 1
         assert data["items"][0]["notes"] == "Leg day"
+
+    async def test_list_ordered_by_date_desc(self, auth_client: AsyncClient):
+        days = ["2026-05-18T10:00:00Z", "2026-05-20T10:00:00Z", "2026-05-19T10:00:00Z"]
+        for i, day in enumerate(days):
+            w = {**_WORKOUT_DATA, "notes": f"Day {i}", "datetime": day}
+            await auth_client.post("/api/strength/", json=w)
+        response = await auth_client.get("/api/strength/")
+        notes = [item["notes"] for item in response.json()["items"]]
+        assert notes == ["Day 1", "Day 2", "Day 0"]
 
 
 @pytest.mark.asyncio
@@ -180,6 +202,19 @@ class TestPatchStrength:
         )
         assert response.status_code == 200
         assert response.json()["notes"] == "Just notes patch"
+
+    async def test_patch_preserves_exercises(self, auth_client: AsyncClient):
+        post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        orig_ex_id = post_resp.json()["exercises"][0]["id"]
+        response = await auth_client.patch(
+            f"/api/strength/{workout_id}",
+            json={"notes": "Only notes changed"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["exercises"]) == 2
+        assert data["exercises"][0]["id"] == orig_ex_id
 
     async def test_patch_not_found(self, auth_client: AsyncClient):
         response = await auth_client.patch(

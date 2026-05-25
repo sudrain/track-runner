@@ -8,6 +8,6 @@ test:
 	uv run pytest -v
 
 test-cov:
-	uv run pytest -v --cov=app
+	uv run pytest -v --cov=app --cov-branch
 
 check: lint test

@@ -32,6 +32,34 @@ class TestCreateCardio:
         response = await auth_client.post("/api/cardio/", json=data)
         assert response.status_code == 422
 
+    async def test_create_without_optional_fields(self, auth_client: AsyncClient):
+        data = {
+            "name": "Minimal",
+            "datetime": "2026-05-20T06:00:00Z",
+            "notes": "",
+            "intervals": [
+                {"duration_minutes": 25.0, "distance_km": 4.0},
+            ],
+        }
+        response = await auth_client.post("/api/cardio/", json=data)
+        assert response.status_code == 201
+        assert response.json()["intervals"][0]["tempo_min_per_km"] is None
+        assert response.json()["intervals"][0]["avg_heart_rate"] is None
+
+    async def test_create_multiple_intervals(self, auth_client: AsyncClient):
+        data = {
+            "name": "Intervals",
+            "datetime": "2026-05-20T06:00:00Z",
+            "notes": "",
+            "intervals": [
+                {"duration_minutes": 10.0, "distance_km": 2.0},
+                {"duration_minutes": 20.0, "distance_km": 4.0},
+            ],
+        }
+        response = await auth_client.post("/api/cardio/", json=data)
+        assert response.status_code == 201
+        assert len(response.json()["intervals"]) == 2
+
     async def test_create_unauthorized(self, client: AsyncClient):
         response = await client.post("/api/cardio/", json=_WORKOUT_DATA)
         assert response.status_code == 401
@@ -54,6 +82,15 @@ class TestListCardio:
         assert data["total"] == 1
         assert len(data["items"]) == 1
         assert data["items"][0]["name"] == "Morning Run"
+
+    async def test_list_ordered_by_date_desc(self, auth_client: AsyncClient):
+        days = ["2026-05-18T06:00:00Z", "2026-05-20T06:00:00Z", "2026-05-19T06:00:00Z"]
+        for i, day in enumerate(days):
+            w = {**_WORKOUT_DATA, "name": f"Run {i}", "datetime": day}
+            await auth_client.post("/api/cardio/", json=w)
+        response = await auth_client.get("/api/cardio/")
+        names = [item["name"] for item in response.json()["items"]]
+        assert names == ["Run 1", "Run 2", "Run 0"]
 
     async def test_list_pagination(self, auth_client: AsyncClient):
         for i in range(3):
@@ -191,6 +228,20 @@ class TestPatchCardio:
         )
         assert response.status_code == 200
         assert response.json()["notes"] == "Just notes patch"
+
+    async def test_patch_preserves_intervals(self, auth_client: AsyncClient):
+        post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
+        workout_id = post_resp.json()["id"]
+        orig_id = post_resp.json()["intervals"][0]["id"]
+        response = await auth_client.patch(
+            f"/api/cardio/{workout_id}",
+            json={"notes": "Only notes changed"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["intervals"]) == 1
+        assert data["intervals"][0]["id"] == orig_id
+        assert data["intervals"][0]["distance_km"] == 5.0
 
     async def test_patch_not_found(self, auth_client: AsyncClient):
         response = await auth_client.patch(
