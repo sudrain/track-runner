@@ -107,7 +107,7 @@
             type="button"
             onclick={() => removeExercise(exIndex)}
             disabled={exercises.length === 1}
-            class="text-red-400 hover:text-red-600 text-lg px-1 pb-1 self-end disabled:opacity-20"
+            class="w-8 flex-shrink-0 text-center text-red-400 hover:text-red-600 text-lg pb-1 disabled:opacity-20"
           >
             ×
           </button>
@@ -115,35 +115,37 @@
 
         <div class="space-y-1">
           {#each exercise.sets as set, setIndex}
-            <div class="flex items-end gap-2">
-              <div class="flex-1 min-w-[80px]">
-                <label for="weight-{exIndex}-{setIndex}" class="block text-sm text-gray-500 mb-0.5">Wt,kg</label>
-                  <input
-                    id="weight-{exIndex}-{setIndex}"
-                    type="number"
-                    step="0.5"
-                    min="0"
-                    bind:value={set.weight_kg}
-                    placeholder="80"
-                    class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  />
-              </div>
-              <div class="flex-1 min-w-[60px]">
-                <label for="reps-{exIndex}-{setIndex}" class="block text-sm text-gray-500 mb-0.5">Reps</label>
-                  <input
-                    id="reps-{exIndex}-{setIndex}"
-                    type="number"
-                    min="1"
-                    bind:value={set.repetitions}
-                    placeholder="10"
-                    class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  />
+            <div class="flex items-end justify-between gap-2">
+              <div class="flex gap-2 flex-1 min-w-0">
+                <div class="flex-1 min-w-[80px]">
+                  <label for="weight-{exIndex}-{setIndex}" class="block text-sm text-gray-500 mb-0.5">Wt,kg</label>
+                    <input
+                      id="weight-{exIndex}-{setIndex}"
+                      type="number"
+                      step="0.5"
+                      min="0"
+                      bind:value={set.weight_kg}
+                      placeholder="80"
+                      class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                </div>
+                <div class="flex-1 min-w-[60px]">
+                  <label for="reps-{exIndex}-{setIndex}" class="block text-sm text-gray-500 mb-0.5">Reps</label>
+                    <input
+                      id="reps-{exIndex}-{setIndex}"
+                      type="number"
+                      min="1"
+                      bind:value={set.repetitions}
+                      placeholder="10"
+                      class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                </div>
               </div>
               <button
                 type="button"
                 onclick={() => removeSet(exIndex, setIndex)}
                 disabled={exercise.sets.length === 1}
-                class="text-red-400 hover:text-red-600 text-base px-1 pb-1 disabled:opacity-20"
+                class="w-8 flex-shrink-0 text-center text-red-400 hover:text-red-600 text-base pb-1 disabled:opacity-20"
               >
                 ×
               </button>
@@ -157,7 +159,7 @@
         </div>
       </div>
     {/each}
-    <div class="flex justify-end">
+    <div class="flex justify-end px-3">
       <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
         + Add exercise
       </button>

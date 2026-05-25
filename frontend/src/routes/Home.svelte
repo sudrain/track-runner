@@ -54,23 +54,20 @@
 
 {#if auth.user}
   <div>
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-      <div class="flex gap-3 sm:gap-2">
+    <div class="flex gap-3 mb-6">
         <button
           onclick={() => navigate('cardio-new')}
-          class="flex-1 sm:flex-none bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
+          class="flex-1 bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
         >
           + Cardio
         </button>
         <button
           onclick={() => navigate('strength-new')}
-          class="flex-1 sm:flex-none bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
+          class="flex-1 bg-indigo-600 text-white rounded-lg px-6 py-4 sm:px-5 sm:py-3 text-lg sm:text-base font-semibold hover:bg-indigo-700 active:bg-indigo-800"
         >
           + Strength
         </button>
       </div>
-    </div>
 
     {#if stats.loading}
       <div class="text-gray-400 text-center py-12">Loading statistics...</div>

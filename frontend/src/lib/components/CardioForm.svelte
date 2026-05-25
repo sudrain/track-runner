@@ -105,12 +105,7 @@
   />
 
   <div>
-    <div class="flex items-center justify-between mb-2">
-      <span class="text-base font-medium text-gray-700">Intervals</span>
-      <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
-        + Add interval
-      </button>
-    </div>
+    <span class="text-base font-medium text-gray-700 mb-2 block">Intervals</span>
 
     <div class="space-y-2">
       {#each intervals as interval, i}
@@ -171,6 +166,11 @@
           </button>
         </div>
       {/each}
+      <div class="flex justify-end">
+        <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
+          + Add interval
+        </button>
+      </div>
     </div>
   </div>
 
