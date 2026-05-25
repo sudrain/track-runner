@@ -94,19 +94,19 @@
     {/if}
 
     {#if recentLoading}
-      <div class="text-gray-400 text-center py-6 text-sm">Loading recent workouts...</div>
+      <div class="text-gray-400 text-center py-6 text-base">Loading recent workouts...</div>
     {:else}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
-          <h2 class="text-sm font-semibold text-gray-700 mb-3">Recent Cardio</h2>
+          <h2 class="text-base font-semibold text-gray-700 mb-3">Recent Cardio</h2>
           {#if recentCardio.length === 0}
-            <p class="text-gray-400 text-sm">No cardio workouts yet</p>
+            <p class="text-gray-400 text-base">No cardio workouts yet</p>
           {:else}
             <div class="space-y-2">
               {#each recentCardio as w}
                 <button
                   onclick={() => navigate('cardio-detail', { id: w.id })}
-                  class="w-full text-left flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-sm"
+                  class="w-full text-left flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-base"
                 >
                   <div>
                     <span class="font-medium text-gray-800">{w.name}</span>
@@ -122,15 +122,15 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <h2 class="text-sm font-semibold text-gray-700 mb-3">Recent Strength</h2>
+          <h2 class="text-base font-semibold text-gray-700 mb-3">Recent Strength</h2>
           {#if recentStrength.length === 0}
-            <p class="text-gray-400 text-sm">No strength workouts yet</p>
+            <p class="text-gray-400 text-base">No strength workouts yet</p>
           {:else}
             <div class="space-y-2">
               {#each recentStrength as w}
                 <button
                   onclick={() => navigate('strength-detail', { id: w.id })}
-                  class="w-full text-left flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-sm"
+                  class="w-full text-left flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-base"
                 >
                   <div>
                     <span class="font-medium text-gray-800">{w.exercises.length} exercises</span>

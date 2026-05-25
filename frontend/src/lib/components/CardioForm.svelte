@@ -87,9 +87,9 @@
   let valid = $derived(name && datetime && intervals.some(i => i.duration_minutes && i.distance_km))
 </script>
 
-<form onsubmit={handleSubmit} class="space-y-3">
+  <form onsubmit={handleSubmit} class="space-y-4">
   {#if cardio.templatesLoading}
-    <select disabled class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base bg-gray-100 text-gray-400">
+    <select disabled class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg bg-gray-100 text-gray-400">
       <option>Loading...</option>
     </select>
   {:else}
@@ -97,7 +97,7 @@
       id="cardio-name"
       bind:value={name}
       required
-      class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
     >
       <option value="" disabled>Select workout type...</option>
       {#each cardio.templates as tpl (tpl.id)}
@@ -111,15 +111,15 @@
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
   />
 
   <div>
     <div class="space-y-2">
       {#each intervals as interval, i}
         <div class="flex items-end gap-2 flex-wrap">
-          <div class="flex-1 min-w-[90px]">
-            <label for="duration-{i}" class="block text-sm text-gray-500 mb-0.5">Min</label>
+          <div class="flex-1 min-w-[100px]">
+            <label for="duration-{i}" class="block text-base text-gray-500 mb-0.5">Min</label>
             <input
               id="duration-{i}"
               type="number"
@@ -127,11 +127,11 @@
               min="0"
               bind:value={interval.duration_minutes}
               placeholder="30"
-              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="flex-1 min-w-[80px]">
-            <label for="distance-{i}" class="block text-sm text-gray-500 mb-0.5">Km</label>
+          <div class="flex-1 min-w-[90px]">
+            <label for="distance-{i}" class="block text-base text-gray-500 mb-0.5">Km</label>
             <input
               id="distance-{i}"
               type="number"
@@ -139,21 +139,21 @@
               min="0"
               bind:value={interval.distance_km}
               placeholder="5.0"
-              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="w-16 sm:w-18">
-            <label for="tempo-{i}" class="block text-sm text-gray-500 mb-0.5">Tempo</label>
+          <div class="w-20 sm:w-20">
+            <label for="tempo-{i}" class="block text-base text-gray-500 mb-0.5">Tempo</label>
             <input
               id="tempo-{i}"
               type="text"
               bind:value={interval.tempo}
               placeholder={computedTempo(interval) || 'M:SS'}
-              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
-          <div class="flex-1 min-w-[80px]">
-            <label for="hr-{i}" class="block text-sm text-gray-500 mb-0.5">HR</label>
+          <div class="flex-1 min-w-[90px]">
+            <label for="hr-{i}" class="block text-base text-gray-500 mb-0.5">HR</label>
             <input
               id="hr-{i}"
               type="number"
@@ -161,38 +161,38 @@
               max="250"
               bind:value={interval.avg_heart_rate}
               placeholder="—"
-              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <button
             type="button"
             onclick={() => removeInterval(i)}
             disabled={intervals.length === 1}
-            class="text-red-400 hover:text-red-600 text-xl px-1 pb-1.5 disabled:opacity-20"
+            class="text-red-400 hover:text-red-600 text-2xl font-bold w-10 flex-shrink-0 pb-1 disabled:opacity-20"
           >
             ×
           </button>
         </div>
       {/each}
       <div class="flex justify-start">
-        <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
+        <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
           + Add interval
         </button>
       </div>
       <textarea
         id="cardio-notes"
         bind:value={notes}
-        rows="1"
-        class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
+        rows="2"
+        class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[56px]"
       ></textarea>
     </div>
   </div>
 
-  <div class="flex gap-2 pt-1">
+  <div class="flex gap-3 pt-2">
     <button
       type="submit"
       disabled={!valid}
-      class="flex-1 bg-indigo-600 text-white rounded-lg py-3 text-base font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="flex-1 bg-indigo-600 text-white rounded-lg py-4 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       Save
     </button>
@@ -200,7 +200,7 @@
       <button
         type="button"
         onclick={oncancel}
-        class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-3 text-base font-medium hover:bg-gray-200"
+        class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-4 text-lg font-medium hover:bg-gray-200"
       >
         Cancel
       </button>

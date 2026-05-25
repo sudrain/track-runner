@@ -99,7 +99,7 @@
     <h1 class="text-2xl font-bold text-gray-800">Strength Workouts</h1>
     <button
       onclick={() => navigate('strength-new')}
-      class="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+      class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700"
     >
       + New Workout
     </button>
@@ -108,12 +108,12 @@
   {#if strength.loading}
     <div class="text-gray-400 text-center py-12">Loading...</div>
   {:else if strength.error}
-    <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
+    <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
   {:else if strength.list.length === 0}
     <div class="text-gray-400 text-center py-12">No workouts yet. Create your first one!</div>
   {:else}
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+      <table class="w-full text-base">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
             <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Date{sortIcon('date')}</th>
@@ -133,7 +133,7 @@
               <td class="py-3 text-right">
                 <button
                   onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
-                  class="text-red-400 hover:text-red-600 text-xs"
+                  class="text-red-400 hover:text-red-600 text-sm"
                 >
                   Delete
                 </button>
@@ -147,7 +147,7 @@
     <div class="flex justify-end gap-2 mt-4">
       <button
         onclick={exportCsv}
-        class="text-xs text-gray-400 hover:text-gray-600 font-medium"
+        class="text-sm text-gray-400 hover:text-gray-600 font-medium"
       >
         Export CSV
       </button>

@@ -16,13 +16,13 @@
   }
 </script>
 
-<div class="flex items-center justify-between mt-6 text-sm">
+<div class="flex items-center justify-between mt-6 text-base">
   <div class="flex items-center gap-2 text-gray-500">
     <span>Rows:</span>
     <select
       value={limit}
       onchange={changeLimit}
-      class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      class="border border-gray-300 rounded px-3 py-1.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
     >
       <option value={10}>10</option>
       <option value={20}>20</option>
@@ -36,14 +36,14 @@
       <button
         disabled={currentPage === 1}
         onclick={() => onpagechange(0)}
-        class="px-3 py-1 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
+        class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
         First
       </button>
       <button
         disabled={currentPage === 1}
         onclick={() => onpagechange((currentPage - 2) * limit)}
-        class="px-3 py-1 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
+        class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
         Prev
       </button>
@@ -55,14 +55,14 @@
       <button
         disabled={currentPage === totalPages}
         onclick={() => onpagechange(currentPage * limit)}
-        class="px-3 py-1 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
+        class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
         Next
       </button>
       <button
         disabled={currentPage === totalPages}
         onclick={() => onpagechange((totalPages - 1) * limit)}
-        class="px-3 py-1 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
+        class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
         Last
       </button>

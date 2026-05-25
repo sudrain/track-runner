@@ -104,22 +104,22 @@
   let valid = $derived(datetime && exercises.some(ex => ex.name && ex.sets.some(s => s.weight_kg && s.repetitions)))
 </script>
 
-<form onsubmit={handleSubmit} class="space-y-3">
+<form onsubmit={handleSubmit} class="space-y-4">
   <input
     id="strength-datetime"
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
   />
 
   <div>
     {#each exercises as exercise, exIndex}
-      <div class="border border-gray-200 rounded-lg px-3 py-3 mb-2">
+      <div class="border border-gray-200 rounded-lg px-4 py-3 mb-3">
         <div class="flex items-center justify-between mb-2">
           <div class="flex-1 mr-2">
             {#if strength.templatesLoading}
-              <select disabled class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base bg-gray-100 text-gray-400">
+              <select disabled class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg bg-gray-100 text-gray-400">
                 <option>Loading...</option>
               </select>
             {:else}
@@ -127,7 +127,7 @@
                 id="exercise-name-{exIndex}"
                 value={exercise.name}
                 onchange={(e) => updateExerciseName(exIndex, (e.target as HTMLSelectElement).value)}
-                class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
               >
                 <option value="" disabled>Select exercise...</option>
                 {#each strength.templates as tpl (tpl.id)}
@@ -140,7 +140,7 @@
             type="button"
             onclick={() => removeExercise(exIndex)}
             disabled={exercises.length === 1}
-            class="w-8 flex-shrink-0 text-center text-red-400 hover:text-red-600 text-lg pb-1 disabled:opacity-20"
+            class="text-red-400 hover:text-red-600 text-2xl font-bold w-10 flex-shrink-0 text-center pb-1 disabled:opacity-20"
           >
             ×
           </button>
@@ -150,8 +150,8 @@
           {#each exercise.sets as set, setIndex}
             <div class="flex items-end justify-between gap-2">
               <div class="flex gap-2 flex-1 min-w-0">
-                <div class="flex-1 min-w-[80px]">
-                  <label for="weight-{exIndex}-{setIndex}" class="block text-sm text-gray-500 mb-0.5">Wt,kg</label>
+                <div class="flex-1 min-w-[90px]">
+                  <label for="weight-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Wt,kg</label>
                     <input
                       id="weight-{exIndex}-{setIndex}"
                       type="number"
@@ -160,11 +160,11 @@
                       value={set.weight_kg}
                       oninput={(e) => updateSet(exIndex, setIndex, 'weight_kg', (e.target as HTMLInputElement).value)}
                       placeholder="80"
-                      class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                 </div>
-                <div class="flex-1 min-w-[60px]">
-                  <label for="reps-{exIndex}-{setIndex}" class="block text-sm text-gray-500 mb-0.5">Reps</label>
+                <div class="flex-1 min-w-[70px]">
+                  <label for="reps-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Reps</label>
                     <input
                       id="reps-{exIndex}-{setIndex}"
                       type="number"
@@ -172,7 +172,7 @@
                       value={set.repetitions}
                       oninput={(e) => updateSet(exIndex, setIndex, 'repetitions', (e.target as HTMLInputElement).value)}
                       placeholder="10"
-                      class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                 </div>
               </div>
@@ -180,14 +180,14 @@
                 type="button"
                 onclick={() => removeSet(exIndex, setIndex)}
                 disabled={exercise.sets.length === 1}
-                class="w-8 flex-shrink-0 text-center text-red-400 hover:text-red-600 text-base pb-1 disabled:opacity-20"
+                class="text-red-400 hover:text-red-600 text-2xl font-bold w-10 flex-shrink-0 text-center pb-1 disabled:opacity-20"
               >
                 ×
               </button>
             </div>
           {/each}
           <div class="flex justify-start">
-            <button type="button" onclick={() => addSet(exIndex)} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
+            <button type="button" onclick={() => addSet(exIndex)} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
               + Add set
             </button>
           </div>
@@ -195,24 +195,24 @@
       </div>
     {/each}
       <div class="flex justify-start px-3">
-        <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
+        <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
           + Add exercise
         </button>
       </div>
       <textarea
         id="strength-notes"
         bind:value={notes}
-        rows="1"
-        class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
+        rows="2"
+        class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[56px]"
       ></textarea>
   </div>
 
 
-  <div class="flex gap-2 pt-1">
+  <div class="flex gap-3 pt-2">
       <button
         type="submit"
         disabled={!valid}
-        class="flex-1 bg-indigo-600 text-white rounded-lg py-3 text-base font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="flex-1 bg-indigo-600 text-white rounded-lg py-4 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Save
       </button>
@@ -220,7 +220,7 @@
         <button
           type="button"
           onclick={oncancel}
-          class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-3 text-base font-medium hover:bg-gray-200"
+          class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-4 text-lg font-medium hover:bg-gray-200"
         >
           Cancel
         </button>

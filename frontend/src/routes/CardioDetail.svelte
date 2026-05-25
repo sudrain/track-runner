@@ -56,20 +56,20 @@
 </script>
 
 <div class="max-w-2xl mx-auto">
-  <button onclick={() => navigate('cardio')} class="text-sm text-indigo-600 hover:text-indigo-800 mb-4 block">
+  <button onclick={() => navigate('cardio')} class="text-base text-indigo-600 hover:text-indigo-800 mb-4 block">
     ← Back to list
   </button>
 
   {#if cardio.currentLoading}
     <div class="text-gray-400 text-center py-12">Loading...</div>
   {:else if cardio.error}
-    <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
+    <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
   {:else if w}
     {#if editing}
       <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit: {w.name}</h1>
 
       {#if error}
-        <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
+        <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
       {/if}
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-2 py-3">
@@ -80,18 +80,18 @@
         <div class="flex items-start justify-between mb-4">
           <div>
             <h1 class="text-2xl font-bold text-gray-800">{w.name}</h1>
-            <p class="text-sm text-gray-500 mt-1">{formatDateShort(w.datetime)}</p>
+            <p class="text-base text-gray-500 mt-1">{formatDateShort(w.datetime)}</p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-3">
             <button
               onclick={() => editing = true}
-              class="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+              class="text-base text-indigo-600 hover:text-indigo-800 font-medium"
             >
               Edit
             </button>
             <button
               onclick={handleDelete}
-              class="text-sm text-red-500 hover:text-red-700 font-medium"
+              class="text-base text-red-500 hover:text-red-700 font-medium"
             >
               Delete
             </button>
@@ -99,10 +99,10 @@
         </div>
 
         {#if w.notes}
-          <p class="text-sm text-gray-600 mb-4 whitespace-pre-wrap">{w.notes}</p>
+          <p class="text-base text-gray-600 mb-4 whitespace-pre-wrap">{w.notes}</p>
         {/if}
 
-        <div class="flex gap-6 mb-4 text-base">
+        <div class="flex gap-6 mb-4 text-lg">
           <div>
             <span class="text-gray-400">Km</span>
             <p class="font-semibold text-gray-800">{totalKm.toFixed(2)}</p>
@@ -118,14 +118,14 @@
         </div>
 
         <div class="border-t border-gray-100 pt-4">
-          <h3 class="text-sm font-medium text-gray-700 mb-2">Intervals ({w.intervals.length})</h3>
+          <h3 class="text-base font-medium text-gray-700 mb-2">Intervals ({w.intervals.length})</h3>
           <IntervalList intervals={w.intervals} />
         </div>
       </div>
     {/if}
 
     {#if saving}
-      <div class="text-gray-400 text-sm text-center mt-4">Saving...</div>
+      <div class="text-gray-400 text-base text-center mt-4">Saving...</div>
     {/if}
   {/if}
 </div>
