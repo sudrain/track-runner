@@ -168,6 +168,12 @@ class StrengthWorkoutOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ExerciseTemplateOut(BaseModel):
+    id: int
+    name: str
+    model_config = ConfigDict(from_attributes=True)
+
+
 class RunningStatsOut(BaseModel):
     week_km: float = Field(description="Километраж за текущую неделю (ПН-ВС)")
     month_km: float = Field(description="Километраж за текущий месяц")

@@ -1,5 +1,10 @@
 import { api, ApiError } from '../api/client'
 
+export interface ExerciseTemplateOut {
+  id: number
+  name: string
+}
+
 export interface CardioIntervalOut {
   id: number
   duration_minutes: number
@@ -147,6 +152,19 @@ class StrengthStore {
   error = $state<string | null>(null)
   current = $state<StrengthWorkoutOut | null>(null)
   currentLoading = $state(false)
+  templates = $state<ExerciseTemplateOut[]>([])
+  templatesLoading = $state(false)
+
+  async fetchTemplates() {
+    this.templatesLoading = true
+    try {
+      this.templates = await api.get<ExerciseTemplateOut[]>('/api/exercise-templates')
+    } catch {
+      this.templates = []
+    } finally {
+      this.templatesLoading = false
+    }
+  }
 
   async fetchList(offset = 0, limit = 200) {
     this.loading = true

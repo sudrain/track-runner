@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { StrengthWorkoutOut, StrengthWorkoutCreate, ExerciseOut } from '../stores/workouts.svelte'
+  import { strength } from '../stores/workouts.svelte'
   import { toDatetimeLocal, fromDatetimeLocal } from '../utils/format'
 
   let {
@@ -38,6 +39,8 @@
       notes = ''
     }
   })
+
+  $effect(() => { strength.fetchTemplates() })
 
   function addExercise() {
     exercises = [...exercises, { name: '', sets: [{ weight_kg: '', repetitions: '' }] }]
@@ -115,14 +118,23 @@
       <div class="border border-gray-200 rounded-lg px-3 py-3 mb-2">
         <div class="flex items-center justify-between mb-2">
           <div class="flex-1 mr-2">
-            <input
-              id="exercise-name-{exIndex}"
-              type="text"
-              value={exercise.name}
-              oninput={(e) => updateExerciseName(exIndex, (e.target as HTMLInputElement).value)}
-              placeholder="Bench Press"
-              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
+            {#if strength.templatesLoading}
+              <select disabled class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base bg-gray-100 text-gray-400">
+                <option>Loading...</option>
+              </select>
+            {:else}
+              <select
+                id="exercise-name-{exIndex}"
+                value={exercise.name}
+                onchange={(e) => updateExerciseName(exIndex, (e.target as HTMLSelectElement).value)}
+                class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+                <option value="" disabled>Select exercise...</option>
+                {#each strength.templates as tpl (tpl.id)}
+                  <option value={tpl.name}>{tpl.name}</option>
+                {/each}
+              </select>
+            {/if}
           </div>
           <button
             type="button"

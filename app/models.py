@@ -127,6 +127,13 @@ class Set(Base):
     exercise = relationship("Exercise", back_populates="sets")
 
 
+class ExerciseTemplate(Base):
+    __tablename__ = "exercise_templates"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), unique=True, nullable=False)
+
+
 class RevokedRefreshToken(Base):
     __tablename__ = "revoked_refresh_tokens"
 

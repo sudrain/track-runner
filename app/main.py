@@ -16,7 +16,7 @@ from alembic import command
 from app.config import AUTO_MIGRATE, CORS_ORIGINS, LOG_LEVEL
 from app.database import AsyncSessionLocal, Base, engine
 from app.models import RevokedRefreshToken
-from app.routers import auth, cardio, statistics, strength
+from app.routers import auth, cardio, exercise_templates, statistics, strength
 
 logger = logging.getLogger("track-runner")
 logging.basicConfig(
@@ -79,6 +79,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(cardio.router)
 app.include_router(strength.router)
+app.include_router(exercise_templates.router)
 app.include_router(statistics.router)
 
 
