@@ -3,6 +3,7 @@
   import Toast from './lib/components/Toast.svelte'
   import ConfirmDialog from './lib/components/ConfirmDialog.svelte'
   import { onMount } from 'svelte'
+  import { fade } from 'svelte/transition'
   import { currentRoute, navigate, parseHash } from './lib/router'
   import { auth } from './lib/stores/auth.svelte'
   import Home from './routes/Home.svelte'
@@ -36,6 +37,8 @@
   <Toast />
   <ConfirmDialog />
   <Layout>
+    {#key route.name}
+      <div transition:fade={{ duration: 120 }}>
     {#if route.name === 'home'}
       <Home />
     {:else if route.name === 'login'}
@@ -55,5 +58,7 @@
     {:else if route.name === 'strength-detail'}
       <StrengthDetail id={route.id} />
     {/if}
+      </div>
+    {/key}
   </Layout>
 {/if}

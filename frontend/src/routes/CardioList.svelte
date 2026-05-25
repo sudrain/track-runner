@@ -8,11 +8,70 @@
   import { showToast } from '../lib/stores/toast.svelte'
 
   let offset = $state(0)
-  let limit = 20
+  let limit = $state(20)
+  type SortCol = 'name' | 'date' | 'distance' | 'duration' | 'tempo' | 'hr'
+  let sortCol = $state<SortCol>('date')
+  let sortDir = $state<'asc' | 'desc'>('desc')
 
   $effect(() => {
     cardio.fetchList(offset, limit)
   })
+
+  function toggleSort(col: SortCol) {
+    if (sortCol === col) {
+      sortDir = sortDir === 'asc' ? 'desc' : 'asc'
+    } else {
+      sortCol = col
+      sortDir = 'desc'
+    }
+  }
+
+  function sortKey(w: CardioWorkoutOut): number | string {
+    switch (sortCol) {
+      case 'name': return w.name
+      case 'date': return w.datetime
+      case 'distance': return totalKm(w.intervals)
+      case 'duration': return totalMin(w.intervals)
+      case 'tempo': return workoutTempo(w.intervals) ?? Infinity
+      case 'hr': return avgHr(w.intervals) ?? -Infinity
+    }
+  }
+
+  let sorted = $derived(
+    [...cardio.list].sort((a, b) => {
+      const ka = sortKey(a)
+      const kb = sortKey(b)
+      if (ka < kb) return sortDir === 'asc' ? -1 : 1
+      if (ka > kb) return sortDir === 'asc' ? 1 : -1
+      return 0
+    })
+  )
+
+  function sortIcon(col: SortCol): string {
+    if (sortCol !== col) return ''
+    return sortDir === 'asc' ? ' ▲' : ' ▼'
+  }
+
+  function handleLimitChange(newLimit: number) {
+    limit = newLimit
+    offset = 0
+  }
+
+  function exportCsv() {
+    const rows = cardio.list.map(w => {
+      const km = totalKm(w.intervals)
+      const min = totalMin(w.intervals)
+      return `${w.name},${formatDateShort(w.datetime)},${km.toFixed(2)},${min.toFixed(0)},${formatTempoShort(workoutTempo(w.intervals))},${avgHr(w.intervals) ?? ''}`
+    })
+    const csv = 'Name,Date,Distance (km),Duration (min),Tempo (/km),HR (bpm)\n' + rows.join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'cardio-workouts.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   function goToDetail(id: number) {
     navigate('cardio-detail', { id })
@@ -74,17 +133,17 @@
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
-            <th class="pb-3 font-medium">Name</th>
-            <th class="pb-3 font-medium">Date</th>
-            <th class="pb-3 font-medium text-right">Distance (km)</th>
-            <th class="pb-3 font-medium text-right">Duration (min)</th>
-            <th class="pb-3 font-medium text-right">Tempo (/km)</th>
-            <th class="pb-3 font-medium text-right">HR (bpm)</th>
+            <th onclick={() => toggleSort('name')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Name{sortIcon('name')}</th>
+            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Date{sortIcon('date')}</th>
+            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Distance (km){sortIcon('distance')}</th>
+            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Duration (min){sortIcon('duration')}</th>
+            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Tempo (/km){sortIcon('tempo')}</th>
+            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">HR (bpm){sortIcon('hr')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-          {#each cardio.list as workout}
+          {#each sorted as workout}
             <tr class="hover:bg-gray-50 cursor-pointer" onclick={() => goToDetail(workout.id)}>
               <td class="py-3 font-medium text-gray-800">{workout.name}</td>
               <td class="py-3 text-gray-500">{formatDateShort(workout.datetime)}</td>
@@ -106,6 +165,15 @@
       </table>
     </div>
 
-    <Pagination {offset} {limit} total={cardio.total} onpagechange={(o: number) => offset = o} />
+    <div class="flex justify-end gap-2 mt-4">
+      <button
+        onclick={exportCsv}
+        class="text-xs text-gray-400 hover:text-gray-600 font-medium"
+      >
+        Export CSV
+      </button>
+    </div>
+
+    <Pagination {offset} {limit} total={cardio.total} onpagechange={(o: number) => offset = o} onlimitchange={handleLimitChange} />
   {/if}
 </div>

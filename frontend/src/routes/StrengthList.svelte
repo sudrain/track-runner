@@ -7,11 +7,67 @@
   import { showToast } from '../lib/stores/toast.svelte'
 
   let offset = $state(0)
-  let limit = 20
+  let limit = $state(20)
+  type SortCol = 'date' | 'exercises' | 'sets' | 'volume'
+  let sortCol = $state<SortCol>('date')
+  let sortDir = $state<'asc' | 'desc'>('desc')
 
   $effect(() => {
     strength.fetchList(offset, limit)
   })
+
+  function toggleSort(col: SortCol) {
+    if (sortCol === col) {
+      sortDir = sortDir === 'asc' ? 'desc' : 'asc'
+    } else {
+      sortCol = col
+      sortDir = 'desc'
+    }
+  }
+
+  function sortKey(w: typeof strength.list[number]): number | string {
+    switch (sortCol) {
+      case 'date': return w.datetime
+      case 'exercises': return w.exercises.length
+      case 'sets': return totalSets(w.exercises)
+      case 'volume': return totalVolume(w.exercises)
+    }
+  }
+
+  let sorted = $derived(
+    [...strength.list].sort((a, b) => {
+      const ka = sortKey(a)
+      const kb = sortKey(b)
+      if (ka < kb) return sortDir === 'asc' ? -1 : 1
+      if (ka > kb) return sortDir === 'asc' ? 1 : -1
+      return 0
+    })
+  )
+
+  function sortIcon(col: SortCol): string {
+    if (sortCol !== col) return ''
+    return sortDir === 'asc' ? ' ▲' : ' ▼'
+  }
+
+  function handleLimitChange(newLimit: number) {
+    limit = newLimit
+    offset = 0
+  }
+
+  function exportCsv() {
+    const rows = strength.list.map(w => {
+      const exercises = w.exercises.map(e => e.name).join('; ')
+      return `${formatDateShort(w.datetime)},"${exercises}",${totalSets(w.exercises)},${totalVolume(w.exercises).toFixed(0)}`
+    })
+    const csv = 'Date,Exercises,Sets,Volume (kg)\n' + rows.join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'strength-workouts.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   function goToDetail(id: number) {
     navigate('strength-detail', { id })
@@ -60,15 +116,15 @@
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
-            <th class="pb-3 font-medium">Date</th>
-            <th class="pb-3 font-medium">Exercises</th>
-            <th class="pb-3 font-medium text-right">Sets</th>
-            <th class="pb-3 font-medium text-right">Volume (kg)</th>
+            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Date{sortIcon('date')}</th>
+            <th onclick={() => toggleSort('exercises')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Exercises{sortIcon('exercises')}</th>
+            <th onclick={() => toggleSort('sets')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Sets{sortIcon('sets')}</th>
+            <th onclick={() => toggleSort('volume')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Volume (kg){sortIcon('volume')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-          {#each strength.list as workout}
+          {#each sorted as workout}
             <tr class="hover:bg-gray-50 cursor-pointer" onclick={() => goToDetail(workout.id)}>
               <td class="py-3 text-gray-700">{formatDateShort(workout.datetime)}</td>
               <td class="py-3 text-gray-800">{workout.exercises.map(e => e.name).join(', ')}</td>
@@ -88,6 +144,15 @@
       </table>
     </div>
 
-    <Pagination {offset} {limit} total={strength.total} onpagechange={(o: number) => offset = o} />
+    <div class="flex justify-end gap-2 mt-4">
+      <button
+        onclick={exportCsv}
+        class="text-xs text-gray-400 hover:text-gray-600 font-medium"
+      >
+        Export CSV
+      </button>
+    </div>
+
+    <Pagination {offset} {limit} total={strength.total} onpagechange={(o: number) => offset = o} onlimitchange={handleLimitChange} />
   {/if}
 </div>
