@@ -11,7 +11,7 @@ export type Route =
   | { name: 'strength-new' }
   | { name: 'strength-detail'; id: number }
 
-function parseHash(): Route {
+export function parseHash(): Route {
   const hash = window.location.hash.replace('#', '') || '/'
   const parts = hash.split('/').filter(Boolean)
 

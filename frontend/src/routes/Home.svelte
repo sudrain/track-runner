@@ -1,13 +1,13 @@
-<script>
-  import { isAuthenticated } from '../lib/stores/auth'
+<script lang="ts">
+  import { auth } from '../lib/stores/auth.svelte'
 </script>
 
 <div class="text-center py-16">
   <h1 class="text-4xl font-bold text-gray-800 mb-4">Track Runner</h1>
   <p class="text-gray-500 text-lg mb-8">Your workout diary</p>
 
-  {#if $isAuthenticated}
-    <p class="text-green-600 font-medium">You are logged in</p>
+  {#if auth.user}
+    <p class="text-green-600 font-medium">You are logged in as {auth.user.email}</p>
   {:else}
     <div class="flex gap-4 justify-center">
       <a
