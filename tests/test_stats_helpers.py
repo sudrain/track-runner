@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from app.routers.statistics import _month_range, _week_range
+from app.routers.statistics import _month_range, _week_range, _year_range
 
 
 class TestWeekRange:
@@ -44,4 +44,26 @@ class TestMonthRange:
         assert start.month == 2
         assert start.day == 1
         assert end.month == 3
+        assert end.day == 1
+
+
+class TestYearRange:
+    def test_mid_year(self):
+        dt = datetime(2026, 6, 15, 12, 0, 0, tzinfo=UTC)
+        start, end = _year_range(dt)
+        assert start.year == 2026
+        assert start.month == 1
+        assert start.day == 1
+        assert end.year == 2027
+        assert end.month == 1
+        assert end.day == 1
+
+    def test_december(self):
+        dt = datetime(2026, 12, 15, 12, 0, 0, tzinfo=UTC)
+        start, end = _year_range(dt)
+        assert start.year == 2026
+        assert start.month == 1
+        assert start.day == 1
+        assert end.year == 2027
+        assert end.month == 1
         assert end.day == 1
