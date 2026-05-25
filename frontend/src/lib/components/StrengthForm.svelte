@@ -14,7 +14,7 @@
 
   let datetime = $state('')
   let notes = $state('')
-  let exercises = $state<Array<{ name: string; sets: Array<{ weight_kg: string; repetitions: string }> }>>([])
+  let exercises = $state<Array<{ name: string; sets: Array<{ weight_kg: string; repetitions: string }> }>>([{ name: '', sets: [{ weight_kg: '', repetitions: '' }] }])
 
   function mapExercises(exercises: ExerciseOut[]) {
     return exercises.map(ex => ({
@@ -36,7 +36,6 @@
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
       datetime = now.toISOString().slice(0, 16)
       notes = ''
-      exercises = [{ name: '', sets: [{ weight_kg: '', repetitions: '' }] }]
     }
   })
 
@@ -49,12 +48,33 @@
   }
 
   function addSet(exIndex: number) {
-    exercises[exIndex].sets = [...exercises[exIndex].sets, { weight_kg: '', repetitions: '' }]
+    exercises = exercises.map((ex, i) =>
+      i === exIndex
+        ? { ...ex, sets: [...ex.sets, { weight_kg: '', repetitions: '' }] }
+        : ex
+    )
   }
 
   function removeSet(exIndex: number, setIndex: number) {
-    const ex = exercises[exIndex]
-    ex.sets = ex.sets.filter((_, i) => i !== setIndex)
+    exercises = exercises.map((ex, i) =>
+      i === exIndex
+        ? { ...ex, sets: ex.sets.filter((_, j) => j !== setIndex) }
+        : ex
+    )
+  }
+
+  function updateSet(exIndex: number, setIndex: number, field: 'weight_kg' | 'repetitions', value: string) {
+    exercises = exercises.map((ex, ei) =>
+      ei === exIndex
+        ? { ...ex, sets: ex.sets.map((s, si) =>
+            si === setIndex ? { ...s, [field]: value } : s
+          )}
+        : ex
+    )
+  }
+
+  function updateExerciseName(exIndex: number, value: string) {
+    exercises = exercises.map((ex, i) => i === exIndex ? { ...ex, name: value } : ex)
   }
 
   function handleSubmit(e: Event) {
@@ -87,7 +107,7 @@
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
   />
 
   <div>
@@ -98,9 +118,10 @@
             <input
               id="exercise-name-{exIndex}"
               type="text"
-              bind:value={exercise.name}
+              value={exercise.name}
+              oninput={(e) => updateExerciseName(exIndex, (e.target as HTMLInputElement).value)}
               placeholder="Bench Press"
-              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <button
@@ -124,9 +145,10 @@
                       type="number"
                       step="0.5"
                       min="0"
-                      bind:value={set.weight_kg}
+                      value={set.weight_kg}
+                      oninput={(e) => updateSet(exIndex, setIndex, 'weight_kg', (e.target as HTMLInputElement).value)}
                       placeholder="80"
-                      class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                 </div>
                 <div class="flex-1 min-w-[60px]">
@@ -135,9 +157,10 @@
                       id="reps-{exIndex}-{setIndex}"
                       type="number"
                       min="1"
-                      bind:value={set.repetitions}
+                      value={set.repetitions}
+                      oninput={(e) => updateSet(exIndex, setIndex, 'repetitions', (e.target as HTMLInputElement).value)}
                       placeholder="10"
-                      class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                      class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     />
                 </div>
               </div>
@@ -151,7 +174,7 @@
               </button>
             </div>
           {/each}
-          <div class="flex justify-end">
+          <div class="flex justify-start">
             <button type="button" onclick={() => addSet(exIndex)} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
               + Add set
             </button>
@@ -159,22 +182,19 @@
         </div>
       </div>
     {/each}
-    <div class="flex justify-end px-3">
-      <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
-        + Add exercise
-      </button>
-    </div>
+      <div class="flex justify-start px-3">
+        <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
+          + Add exercise
+        </button>
+      </div>
+      <textarea
+        id="strength-notes"
+        bind:value={notes}
+        rows="1"
+        class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
+      ></textarea>
   </div>
 
-  <div>
-    <label for="strength-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-    <textarea
-      id="strength-notes"
-      bind:value={notes}
-      rows="1"
-      class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
-    ></textarea>
-  </div>
 
   <div class="flex gap-2 pt-1">
       <button

@@ -85,28 +85,23 @@
 </script>
 
 <form onsubmit={handleSubmit} class="space-y-3">
-  <div>
-    <label for="cardio-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-    <input
-      id="cardio-name"
-      type="text"
-      bind:value={name}
-      required
-      class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
-    />
-  </div>
+  <input
+    id="cardio-name"
+    type="text"
+    bind:value={name}
+    required
+    class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+  />
 
   <input
     id="cardio-datetime"
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
   />
 
   <div>
-    <span class="text-base font-medium text-gray-700 mb-2 block">Intervals</span>
-
     <div class="space-y-2">
       {#each intervals as interval, i}
         <div class="flex items-end gap-2 flex-wrap">
@@ -119,7 +114,7 @@
               min="0"
               bind:value={interval.duration_minutes}
               placeholder="30"
-              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div class="flex-1 min-w-[80px]">
@@ -131,7 +126,7 @@
               min="0"
               bind:value={interval.distance_km}
               placeholder="5.0"
-              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div class="w-16 sm:w-18">
@@ -141,7 +136,7 @@
               type="text"
               bind:value={interval.tempo}
               placeholder={computedTempo(interval) || 'M:SS'}
-              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div class="flex-1 min-w-[80px]">
@@ -153,7 +148,7 @@
               max="250"
               bind:value={interval.avg_heart_rate}
               placeholder="—"
-              class="w-full border border-gray-300 rounded px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 rounded px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <button
@@ -166,22 +161,18 @@
           </button>
         </div>
       {/each}
-      <div class="flex justify-end">
+      <div class="flex justify-start">
         <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-indigo-700">
           + Add interval
         </button>
       </div>
+      <textarea
+        id="cardio-notes"
+        bind:value={notes}
+        rows="1"
+        class="w-full border border-gray-300 rounded-lg px-3 py-4 sm:py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
+      ></textarea>
     </div>
-  </div>
-
-  <div>
-    <label for="cardio-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-    <textarea
-      id="cardio-notes"
-      bind:value={notes}
-      rows="1"
-      class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
-    ></textarea>
   </div>
 
   <div class="flex gap-2 pt-1">
