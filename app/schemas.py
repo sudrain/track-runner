@@ -153,3 +153,13 @@ class StrengthWorkoutOut(BaseModel):
 class RunningStatsOut(BaseModel):
     week_km: float = Field(description="Километраж за текущую неделю (ПН-ВС)")
     month_km: float = Field(description="Километраж за текущий месяц")
+    year_km: float = Field(description="Километраж за текущий год")
+    week_avg_tempo: float | None = Field(
+        default=None, description="Средний темп за неделю (мин/км)"
+    )
+    month_avg_tempo: float | None = Field(
+        default=None, description="Средний темп за месяц (мин/км)"
+    )
+    year_avg_tempo: float | None = Field(
+        default=None, description="Средний темп за год (мин/км)"
+    )

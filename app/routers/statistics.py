@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies import get_current_user, get_db
@@ -35,6 +35,14 @@ def _month_range(today: datetime):
     return first_day, next_month
 
 
+def _year_range(today: datetime):
+    """Возвращает первое января года и первое января следующего года (exclusive)."""
+    today = _ensure_tz(today)
+    first_jan = today.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+    next_jan = first_jan.replace(year=first_jan.year + 1)
+    return first_jan, next_jan
+
+
 @router.get("/running", response_model=RunningStatsOut)
 async def running_stats(
     db: AsyncSession = Depends(get_db),
@@ -43,24 +51,45 @@ async def running_stats(
     now = datetime.now(UTC)
     week_start, week_end = _week_range(now)
     month_start, month_end = _month_range(now)
+    year_start, year_end = _year_range(now)
 
-    # Единый запрос: дистанции за неделю + месяц
+    def _sum_distance(period_start, period_end):
+        return func.coalesce(
+            func.sum(CardioInterval.distance_km).filter(
+                CardioWorkout.datetime >= period_start,
+                CardioWorkout.datetime < period_end,
+            ),
+            0,
+        )
+
+    def _sum_duration(period_start, period_end):
+        return func.coalesce(
+            func.sum(CardioInterval.duration_minutes).filter(
+                CardioWorkout.datetime >= period_start,
+                CardioWorkout.datetime < period_end,
+            ),
+            0,
+        )
+
+    def _avg_tempo(dist, dur):
+        return case((dist > 0, dur / dist), else_=None)
+
+    week_dist = _sum_distance(week_start, week_end)
+    month_dist = _sum_distance(month_start, month_end)
+    year_dist = _sum_distance(year_start, year_end)
+
+    week_dur = _sum_duration(week_start, week_end)
+    month_dur = _sum_duration(month_start, month_end)
+    year_dur = _sum_duration(year_start, year_end)
+
     aggregate_query = (
         select(
-            func.coalesce(
-                func.sum(CardioInterval.distance_km).filter(
-                    CardioWorkout.datetime >= week_start,
-                    CardioWorkout.datetime < week_end,
-                ),
-                0,
-            ),
-            func.coalesce(
-                func.sum(CardioInterval.distance_km).filter(
-                    CardioWorkout.datetime >= month_start,
-                    CardioWorkout.datetime < month_end,
-                ),
-                0,
-            ),
+            week_dist,
+            month_dist,
+            year_dist,
+            _avg_tempo(week_dist, week_dur),
+            _avg_tempo(month_dist, month_dur),
+            _avg_tempo(year_dist, year_dur),
         )
         .select_from(CardioInterval)
         .join(CardioWorkout, CardioInterval.workout_id == CardioWorkout.id)
@@ -69,4 +98,7 @@ async def running_stats(
 
     result = await db.execute(aggregate_query)
     row = result.one()
-    return RunningStatsOut(week_km=row[0], month_km=row[1])
+    return RunningStatsOut(
+        week_km=row[0], month_km=row[1], year_km=row[2],
+        week_avg_tempo=row[3], month_avg_tempo=row[4], year_avg_tempo=row[5],
+    )
