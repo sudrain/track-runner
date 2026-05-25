@@ -115,7 +115,7 @@
   />
 
   <div>
-    <div class="space-y-2">
+    <div class="space-y-0.5">
       {#each intervals as interval, i}
         <div class="flex items-end gap-1.5">
           <div class="w-16">

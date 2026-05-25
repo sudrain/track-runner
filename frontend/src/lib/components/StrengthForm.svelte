@@ -115,7 +115,7 @@
 
   <div>
     {#each exercises as exercise, exIndex}
-      <div class="border border-gray-200 rounded-lg px-4 py-3 mb-3">
+      <div class="border border-gray-200 rounded-lg px-4 py-3">
         <div class="flex items-center justify-between mb-2">
           <div class="flex-1 mr-2">
             {#if strength.templatesLoading}
@@ -146,7 +146,7 @@
           </button>
         </div>
 
-        <div class="space-y-1">
+        <div class="space-y-0.5">
           {#each exercise.sets as set, setIndex}
             <div class="flex items-end justify-between gap-1.5">
               <div class="flex gap-1.5 min-w-0">
@@ -194,7 +194,7 @@
         </div>
       </div>
     {/each}
-      <div class="flex justify-start px-3">
+      <div class="flex justify-start">
         <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
           + Add exercise
         </button>
