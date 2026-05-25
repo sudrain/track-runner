@@ -16,31 +16,51 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.execute("""
-        CREATE TABLE exercise_templates_new (
-            id INTEGER NOT NULL,
-            name VARCHAR(100) NOT NULL,
-            type VARCHAR(20) NOT NULL DEFAULT 'strength',
-            PRIMARY KEY (id),
-            CONSTRAINT uq_exercise_template_name_type UNIQUE (name, type)
+    bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        op.execute(
+            "ALTER TABLE exercise_templates "
+            "DROP CONSTRAINT IF EXISTS exercise_templates_name_key"
         )
-    """)
-    op.execute("INSERT INTO exercise_templates_new (id, name, type) SELECT id, name, type FROM exercise_templates")
-    op.execute("DROP TABLE exercise_templates")
-    op.execute("ALTER TABLE exercise_templates_new RENAME TO exercise_templates")
+    else:
+        op.execute("""
+            CREATE TABLE exercise_templates_new (
+                id INTEGER NOT NULL,
+                name VARCHAR(100) NOT NULL,
+                type VARCHAR(20) NOT NULL DEFAULT 'strength',
+                PRIMARY KEY (id),
+                CONSTRAINT uq_exercise_template_name_type UNIQUE (name, type)
+            )
+        """)
+        op.execute(
+            "INSERT INTO exercise_templates_new (id, name, type) "
+            "SELECT id, name, type FROM exercise_templates"
+        )
+        op.execute("DROP TABLE exercise_templates")
+        op.execute("ALTER TABLE exercise_templates_new RENAME TO exercise_templates")
 
 
 def downgrade() -> None:
-    op.execute("""
-        CREATE TABLE exercise_templates_old (
-            id INTEGER NOT NULL,
-            name VARCHAR(100) NOT NULL,
-            type VARCHAR(20) NOT NULL DEFAULT 'strength',
-            PRIMARY KEY (id),
-            UNIQUE (name),
-            CONSTRAINT uq_exercise_template_name_type UNIQUE (name, type)
+    bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        op.execute(
+            "ALTER TABLE exercise_templates "
+            "ADD CONSTRAINT exercise_templates_name_key UNIQUE (name)"
         )
-    """)
-    op.execute("INSERT INTO exercise_templates_old (id, name, type) SELECT id, name, type FROM exercise_templates")
-    op.execute("DROP TABLE exercise_templates")
-    op.execute("ALTER TABLE exercise_templates_old RENAME TO exercise_templates")
+    else:
+        op.execute("""
+            CREATE TABLE exercise_templates_old (
+                id INTEGER NOT NULL,
+                name VARCHAR(100) NOT NULL,
+                type VARCHAR(20) NOT NULL DEFAULT 'strength',
+                PRIMARY KEY (id),
+                UNIQUE (name),
+                CONSTRAINT uq_exercise_template_name_type UNIQUE (name, type)
+            )
+        """)
+        op.execute(
+            "INSERT INTO exercise_templates_old (id, name, type) "
+            "SELECT id, name, type FROM exercise_templates"
+        )
+        op.execute("DROP TABLE exercise_templates")
+        op.execute("ALTER TABLE exercise_templates_old RENAME TO exercise_templates")
