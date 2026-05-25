@@ -87,7 +87,7 @@
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400"
   />
 
   <div>
@@ -166,7 +166,7 @@
       id="strength-notes"
       bind:value={notes}
       rows="1"
-      class="w-full border border-gray-300 rounded-lg px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
+      class="w-full border border-gray-300 rounded-lg px-2 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[48px]"
     ></textarea>
   </div>
 
