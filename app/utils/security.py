@@ -52,11 +52,14 @@ def create_refresh_token(data: dict) -> str:
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_token(token: str) -> dict | None:
+def decode_token(token: str, expected_type: str | None = None) -> dict | None:
     try:
-        return jwt.decode(
+        payload = jwt.decode(
             token, SECRET_KEY, algorithms=[ALGORITHM], audience=JWT_AUDIENCE,
             options={"leeway": 30},
         )
+        if expected_type is not None and payload.get("type") != expected_type:
+            return None
+        return payload
     except JWTError:
         return None

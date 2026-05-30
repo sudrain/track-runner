@@ -115,40 +115,49 @@ async def refresh(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token missing",
         )
-    payload = decode_token(raw_token)
-    if payload is None or payload.get("type") != "refresh":
+    payload = decode_token(raw_token, expected_type="refresh")
+    if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token",
         )
     jti = payload.get("jti")
+    if not jti:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+        )
     user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+        )
 
+    exp = payload.get("exp")
     # Atomically insert JTI — unique constraint prevents reuse race
-    if jti:
-        exp = payload.get("exp")
-        try:
-            db.add(
-                RevokedRefreshToken(
-                    user_id=user_id,
-                    token_jti=jti,
-                    expires_at=datetime.fromtimestamp(exp, tz=UTC),
-                )
+    try:
+        db.add(
+            RevokedRefreshToken(
+                user_id=user_id,
+                token_jti=jti,
+                expires_at=datetime.fromtimestamp(exp, tz=UTC),
             )
-            await db.flush()
-        except IntegrityError:
-            await db.rollback()
-            # Token reuse detected — revoke all sessions for this user
-            await db.execute(
-                sa_delete(RevokedRefreshToken).where(
-                    RevokedRefreshToken.user_id == user_id
-                )
+        )
+        await db.flush()
+    except IntegrityError:
+        await db.rollback()
+        # Token reuse detected — revoke all sessions for this user
+        await db.execute(
+            sa_delete(RevokedRefreshToken).where(
+                RevokedRefreshToken.user_id == user_id
             )
-            await db.commit()
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has been revoked",
-            ) from None
+        )
+        await db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
+        ) from None
 
     user = await db.get(User, user_id)
     if not user:

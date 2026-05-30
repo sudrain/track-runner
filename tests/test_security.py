@@ -74,6 +74,14 @@ class TestRefreshToken:
         p2 = decode_token(t2)
         assert p1["jti"] != p2["jti"]
 
+    def test_decode_token_expected_type(self):
+        access = create_access_token({"sub": "user-123"})
+        refresh = create_refresh_token({"sub": "user-123"})
+        assert decode_token(access, expected_type="access") is not None
+        assert decode_token(access, expected_type="refresh") is None
+        assert decode_token(refresh, expected_type="access") is None
+        assert decode_token(refresh, expected_type="refresh") is not None
+
     def test_decode_token_different_key(self):
         token = create_access_token({"sub": "user-123"})
         assert decode_token(token) is not None

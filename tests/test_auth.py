@@ -123,6 +123,23 @@ class TestRefresh:
         response = await client.post("/api/auth/refresh")
         assert response.status_code == 401
 
+    async def test_refresh_token_without_jti(self, client: AsyncClient):
+        from jose import jwt
+
+        from app.config import ALGORITHM, JWT_AUDIENCE, SECRET_KEY
+        from app.utils.security import create_refresh_token
+
+        token = create_refresh_token({"sub": "user-123"})
+        payload = jwt.decode(
+            token, SECRET_KEY, algorithms=[ALGORITHM], audience=JWT_AUDIENCE
+        )
+        del payload["jti"]
+        tampered = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+        client.cookies.set("refresh_token", tampered)
+        response = await client.post("/api/auth/refresh")
+        assert response.status_code == 401
+        assert "invalid" in response.json()["detail"].lower()
+
     async def test_refresh_token_reuse(self, auth_client: AsyncClient):
         old_refresh = auth_client.cookies.get("refresh_token")
         # First refresh rotates the token
