@@ -11,11 +11,11 @@
 </script>
 
 {#if intervals.length === 0}
-  <p class="text-gray-400 text-base">Нет интервалов</p>
+  <p class="text-gray-400 dark:text-gray-500 text-base">Нет интервалов</p>
 {:else}
   <table class="w-full text-base">
     <thead>
-      <tr class="border-b border-gray-200 text-left text-gray-500">
+      <tr class="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
         <th class="pb-1.5 font-medium w-8">#</th>
         <th class="pb-1.5 font-medium">Мин</th>
         <th class="pb-1.5 font-medium">Км</th>
@@ -25,8 +25,8 @@
     </thead>
     <tbody>
       {#each intervals as interval, i}
-        <tr class="border-b border-gray-50 text-gray-700">
-          <td class="py-2 text-gray-400">{i + 1}</td>
+        <tr class="border-b border-gray-50 dark:border-gray-800 text-gray-700 dark:text-gray-300">
+          <td class="py-2 text-gray-400 dark:text-gray-500">{i + 1}</td>
           <td class="py-2">{interval.duration_minutes.toFixed(1)}</td>
           <td class="py-2">{interval.distance_km.toFixed(2)}</td>
           <td class="py-2">{displayTempo(interval)}</td>

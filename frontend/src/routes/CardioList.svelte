@@ -114,7 +114,7 @@
 
 <div>
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Кардио-тренировки</h1>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Кардио-тренировки</h1>
     <button
       onclick={() => navigate('cardio-new')}
       class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700"
@@ -128,7 +128,7 @@
       <div class="hidden md:block">
         <table class="w-full text-base">
           <thead>
-            <tr class="border-b border-gray-200 text-left text-gray-500">
+            <tr class="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
               <th class="pb-3 font-medium">Название</th>
               <th class="pb-3 font-medium">Дата</th>
               <th class="pb-3 font-medium text-right">Км</th>
@@ -155,7 +155,7 @@
       </div>
       <div class="block md:hidden space-y-3">
         {#each [1, 2, 3, 4, 5] as _}
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-2">
+          <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 space-y-2">
             <div class="flex justify-between">
               <Skeleton class="h-5 w-28" />
               <Skeleton class="h-5 w-5 rounded-full" />
@@ -170,32 +170,32 @@
       </div>
     </div>
   {:else if cardio.error}
-    <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
+    <div class="text-red-600 dark:text-red-400 text-base bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded px-4 py-3">{cardio.error}</div>
   {:else if cardio.list.length === 0}
-    <div class="text-gray-400 text-center py-12">Пока нет тренировок. Создайте первую!</div>
+    <div class="text-gray-400 dark:text-gray-500 text-center py-12">Пока нет тренировок. Создайте первую!</div>
   {:else}
     <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-base">
         <thead>
-          <tr class="border-b border-gray-200 text-left text-gray-500">
-            <th onclick={() => toggleSort('name')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Название{sortIcon('name')}</th>
-            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Дата{sortIcon('date')}</th>
-            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Км{sortIcon('distance')}</th>
-            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Мин{sortIcon('duration')}</th>
-            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Темп{sortIcon('tempo')}</th>
-            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Пульс{sortIcon('hr')}</th>
+          <tr class="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
+            <th onclick={() => toggleSort('name')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Название{sortIcon('name')}</th>
+            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Дата{sortIcon('date')}</th>
+            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Км{sortIcon('distance')}</th>
+            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Мин{sortIcon('duration')}</th>
+            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Темп{sortIcon('tempo')}</th>
+            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Пульс{sortIcon('hr')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
           {#each sorted as workout}
-            <tr class="hover:bg-gray-50 cursor-pointer" onclick={() => goToDetail(workout.id)}>
-              <td class="py-3 font-medium text-gray-800">{workout.name}</td>
-              <td class="py-3 text-gray-500">{formatDateShort(workout.datetime)}</td>
-              <td class="py-3 text-right text-gray-700">{totalKm(workout.intervals).toFixed(2)}</td>
-              <td class="py-3 text-right text-gray-700">{totalMin(workout.intervals).toFixed(0)}</td>
-              <td class="py-3 text-right text-gray-700">{formatTempoShort(workoutTempo(workout.intervals))}</td>
-              <td class="py-3 text-right text-gray-700">{avgHr(workout.intervals) ?? '—'}</td>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onclick={() => goToDetail(workout.id)}>
+              <td class="py-3 font-medium text-gray-800 dark:text-gray-100">{workout.name}</td>
+              <td class="py-3 text-gray-500 dark:text-gray-400">{formatDateShort(workout.datetime)}</td>
+              <td class="py-3 text-right text-gray-700 dark:text-gray-300">{totalKm(workout.intervals).toFixed(2)}</td>
+              <td class="py-3 text-right text-gray-700 dark:text-gray-300">{totalMin(workout.intervals).toFixed(0)}</td>
+              <td class="py-3 text-right text-gray-700 dark:text-gray-300">{formatTempoShort(workoutTempo(workout.intervals))}</td>
+              <td class="py-3 text-right text-gray-700 dark:text-gray-300">{avgHr(workout.intervals) ?? '—'}</td>
               <td class="py-3 text-right">
                 <button
                   onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
@@ -215,14 +215,14 @@
         <div
           role="button"
           tabindex="0"
-          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 cursor-pointer active:bg-gray-50"
+          class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 cursor-pointer active:bg-gray-50 dark:active:bg-gray-800"
           onclick={() => goToDetail(workout.id)}
           onkeydown={(e) => { if (e.key === 'Enter') goToDetail(workout.id) }}
         >
           <div class="flex justify-between items-start">
             <div>
-              <div class="font-semibold text-gray-800">{workout.name}</div>
-              <div class="text-sm text-gray-500 mt-0.5">{formatDateShort(workout.datetime)}</div>
+              <div class="font-semibold text-gray-800 dark:text-gray-100">{workout.name}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{formatDateShort(workout.datetime)}</div>
             </div>
             <button
               onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
@@ -231,7 +231,7 @@
               ✕
             </button>
           </div>
-          <div class="flex gap-4 mt-2 text-sm text-gray-600">
+          <div class="flex gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
             <span>{totalKm(workout.intervals).toFixed(2)} км</span>
             <span>{totalMin(workout.intervals).toFixed(0)} мин</span>
             <span>⏱ {formatTempoShort(workoutTempo(workout.intervals))}</span>
@@ -243,7 +243,7 @@
     <div class="flex justify-end gap-2 mt-4">
       <button
         onclick={exportCsv}
-        class="text-sm text-gray-400 hover:text-gray-600 font-medium"
+        class="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 font-medium"
       >
         Экспорт CSV
       </button>

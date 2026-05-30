@@ -28,13 +28,13 @@
 </script>
 
 <div class="max-w-2xl mx-auto">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Новая силовая тренировка</h1>
+  <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">Новая силовая тренировка</h1>
 
   {#if error}
-    <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
+    <div class="text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded px-4 py-3 mb-4">{error}</div>
   {/if}
 
-  <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-1 py-2">
+  <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 px-1 py-2">
     <StrengthForm {saving} onsubmit={handleSubmit} oncancel={handleCancel} />
   </div>
 </div>

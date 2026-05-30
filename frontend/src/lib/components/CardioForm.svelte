@@ -91,7 +91,7 @@
 
   <form onsubmit={handleSubmit} class="space-y-4">
   {#if cardio.templatesLoading}
-    <select disabled class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg bg-gray-100 text-gray-400">
+    <select disabled class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-5 sm:py-4 text-lg bg-gray-100 dark:bg-gray-800 text-gray-400">
       <option>Загрузка...</option>
     </select>
   {:else}
@@ -99,7 +99,7 @@
       id="cardio-name"
       bind:value={name}
       required
-      class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
     >
       <option value="" disabled>Выберите тип тренировки...</option>
       {#each cardio.templates as tpl (tpl.id)}
@@ -113,7 +113,7 @@
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
   />
 
   <div>
@@ -121,7 +121,7 @@
       {#each intervals as interval, i}
         <div class="flex items-end gap-1.5 md:gap-2">
           <div class="w-16 md:flex-1 md:min-w-[140px]">
-            <label for="duration-{i}" class="block text-base text-gray-500 mb-0.5">Мин</label>
+            <label for="duration-{i}" class="block text-base text-gray-500 dark:text-gray-400 mb-0.5">Мин</label>
             <input
               id="duration-{i}"
               type="number"
@@ -129,11 +129,11 @@
               min="0"
               bind:value={interval.duration_minutes}
               placeholder="30"
-              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+               class="w-full border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
             />
           </div>
           <div class="w-20 md:flex-1 md:min-w-[140px]">
-            <label for="distance-{i}" class="block text-base text-gray-500 mb-0.5">Км</label>
+            <label for="distance-{i}" class="block text-base text-gray-500 dark:text-gray-400 mb-0.5">Км</label>
             <input
               id="distance-{i}"
               type="number"
@@ -141,21 +141,21 @@
               min="0"
               bind:value={interval.distance_km}
               placeholder="5.0"
-              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
             />
           </div>
           <div class="w-20 md:w-28">
-            <label for="tempo-{i}" class="block text-base text-gray-500 mb-0.5">Темп</label>
+            <label for="tempo-{i}" class="block text-base text-gray-500 dark:text-gray-400 mb-0.5">Темп</label>
             <input
               id="tempo-{i}"
               type="text"
               bind:value={interval.tempo}
               placeholder={computedTempo(interval) || 'M:SS'}
-              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
             />
           </div>
           <div class="w-16 md:flex-1 md:min-w-[100px]">
-            <label for="hr-{i}" class="block text-base text-gray-500 mb-0.5">Пульс</label>
+            <label for="hr-{i}" class="block text-base text-gray-500 dark:text-gray-400 mb-0.5">Пульс</label>
             <input
               id="hr-{i}"
               type="number"
@@ -163,7 +163,7 @@
               max="250"
               bind:value={interval.avg_heart_rate}
               placeholder="—"
-              class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              class="w-full border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
             />
           </div>
           <button
@@ -185,7 +185,7 @@
         id="cardio-notes"
         bind:value={notes}
         rows="2"
-        class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[56px]"
+        class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[56px] dark:bg-gray-800 dark:text-gray-100"
       ></textarea>
     </div>
   </div>
@@ -202,7 +202,7 @@
       <button
         type="button"
         onclick={oncancel}
-        class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-4 text-lg font-medium hover:bg-gray-200"
+        class="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg py-4 text-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
       >
         Отмена
       </button>

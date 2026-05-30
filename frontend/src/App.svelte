@@ -31,7 +31,7 @@
 </script>
 
 {#if auth.loading}
-  <div class="min-h-screen bg-gray-50 p-8 space-y-4">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-950 p-8 space-y-4">
     <div class="max-w-5xl mx-auto space-y-4">
       <Skeleton class="h-8 w-48" />
       <Skeleton class="h-4 w-full" />

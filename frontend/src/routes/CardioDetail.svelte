@@ -64,7 +64,7 @@
   {#if cardio.currentLoading}
     <div class="space-y-4">
       <Skeleton class="h-4 w-32" />
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-3">
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 sm:p-6 space-y-3">
         <Skeleton class="h-7 w-48" />
         <Skeleton class="h-4 w-36" />
         <div class="flex gap-6 mt-4">
@@ -78,29 +78,29 @@
       </div>
     </div>
   {:else if cardio.error}
-    <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
+    <div class="text-red-600 dark:text-red-400 text-base bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded px-4 py-3">{cardio.error}</div>
   {:else if w}
     {#if editing}
-      <h1 class="text-2xl font-bold text-gray-800 mb-6">Редактировать: {w.name}</h1>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Редактировать: {w.name}</h1>
 
       {#if error}
-        <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
+        <div class="text-red-600 dark:text-red-400 text-base bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded px-4 py-3 mb-4">{error}</div>
       {/if}
 
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-2 py-3">
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 px-2 py-3">
         <CardioForm workout={w} {saving} onsubmit={handleSave} oncancel={handleCancelEdit} />
       </div>
     {:else}
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-2 py-3">
+      <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 px-2 py-3">
         <div class="flex items-start justify-between mb-4">
           <div>
-            <h1 class="text-2xl font-bold text-gray-800">{w.name}</h1>
-            <p class="text-base text-gray-500 mt-1">{formatDateShort(w.datetime)}</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">{w.name}</h1>
+            <p class="text-base text-gray-500 dark:text-gray-400 mt-1">{formatDateShort(w.datetime)}</p>
           </div>
           <div class="flex gap-3">
             <button
               onclick={() => editing = true}
-              class="text-base text-indigo-600 hover:text-indigo-800 font-medium"
+              class="text-base text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
             >
               Редактировать
             </button>
@@ -114,26 +114,26 @@
         </div>
 
         {#if w.notes}
-          <p class="text-base text-gray-600 mb-4 whitespace-pre-wrap">{w.notes}</p>
+          <p class="text-base text-gray-600 dark:text-gray-400 mb-4 whitespace-pre-wrap">{w.notes}</p>
         {/if}
 
         <div class="flex gap-6 mb-4 text-lg">
           <div>
-            <span class="text-gray-400">Км</span>
-            <p class="font-semibold text-gray-800">{totalKm.toFixed(2)}</p>
+            <span class="text-gray-400 dark:text-gray-500">Км</span>
+            <p class="font-semibold text-gray-800 dark:text-gray-100">{totalKm.toFixed(2)}</p>
           </div>
           <div>
-            <span class="text-gray-400">Мин</span>
-            <p class="font-semibold text-gray-800">{totalMin.toFixed(0)}</p>
+            <span class="text-gray-400 dark:text-gray-500">Мин</span>
+            <p class="font-semibold text-gray-800 dark:text-gray-100">{totalMin.toFixed(0)}</p>
           </div>
           <div>
-            <span class="text-gray-400">Темп</span>
-            <p class="font-semibold text-gray-800">{formatTempoShort(tempo)}</p>
+            <span class="text-gray-400 dark:text-gray-500">Темп</span>
+            <p class="font-semibold text-gray-800 dark:text-gray-100">{formatTempoShort(tempo)}</p>
           </div>
         </div>
 
-        <div class="border-t border-gray-100 pt-4">
-          <h3 class="text-base font-medium text-gray-700 mb-2">Интервалы ({w.intervals.length})</h3>
+        <div class="border-t border-gray-100 dark:border-gray-800 pt-4">
+          <h3 class="text-base font-medium text-gray-700 dark:text-gray-300 mb-2">Интервалы ({w.intervals.length})</h3>
           <IntervalList intervals={w.intervals} />
         </div>
       </div>

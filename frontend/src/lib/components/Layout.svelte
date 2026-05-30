@@ -4,7 +4,7 @@
   let { children } = $props()
 </script>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950">
   <Navbar />
   <main class="max-w-5xl mx-auto px-0 py-4 sm:py-6 pb-20 md:pb-6">
     {@render children()}

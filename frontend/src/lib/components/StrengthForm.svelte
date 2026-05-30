@@ -112,16 +112,16 @@
     type="datetime-local"
     bind:value={datetime}
     required
-    class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
   />
 
   <div class="space-y-4">
     {#each exercises as exercise, exIndex}
-      <div class="border border-gray-200 rounded-lg px-4 py-3">
+      <div class="border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 dark:bg-gray-800/50">
         <div class="flex items-center justify-between mb-2">
           <div class="flex-1 mr-2">
             {#if strength.templatesLoading}
-              <select disabled class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg bg-gray-100 text-gray-400">
+              <select disabled class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-5 sm:py-4 text-lg bg-gray-100 dark:bg-gray-800 text-gray-400">
                 <option>Загрузка...</option>
               </select>
             {:else}
@@ -129,7 +129,7 @@
                 id="exercise-name-{exIndex}"
                 value={exercise.name}
                 onchange={(e) => updateExerciseName(exIndex, (e.target as HTMLSelectElement).value)}
-                class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
               >
                 <option value="" disabled>Выберите упражнение...</option>
                 {#each strength.templates as tpl (tpl.id)}
@@ -153,7 +153,7 @@
             <div class="flex items-end justify-between gap-1.5 md:gap-2">
               <div class="flex gap-1.5 md:gap-2 min-w-0">
                 <div class="w-20 md:flex-1 md:min-w-[140px]">
-                  <label for="weight-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Вес,кг</label>
+                  <label for="weight-{exIndex}-{setIndex}" class="block text-base text-gray-500 dark:text-gray-400 mb-0.5">Вес,кг</label>
                     <input
                       id="weight-{exIndex}-{setIndex}"
                       type="number"
@@ -162,11 +162,11 @@
                       value={set.weight_kg}
                       oninput={(e) => updateSet(exIndex, setIndex, 'weight_kg', (e.target as HTMLInputElement).value)}
                       placeholder="80"
-                      class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                       class="w-full border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
                     />
                 </div>
                 <div class="w-16 md:flex-1 md:min-w-[100px]">
-                  <label for="reps-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Повт</label>
+                  <label for="reps-{exIndex}-{setIndex}" class="block text-base text-gray-500 dark:text-gray-400 mb-0.5">Повт</label>
                     <input
                       id="reps-{exIndex}-{setIndex}"
                       type="number"
@@ -174,7 +174,7 @@
                       value={set.repetitions}
                       oninput={(e) => updateSet(exIndex, setIndex, 'repetitions', (e.target as HTMLInputElement).value)}
                       placeholder="10"
-                      class="w-full border border-gray-300 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                       class="w-full border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-800 dark:text-gray-100"
                     />
                 </div>
               </div>
@@ -205,7 +205,7 @@
         id="strength-notes"
         bind:value={notes}
         rows="2"
-        class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[56px]"
+        class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none min-h-[56px] dark:bg-gray-800 dark:text-gray-100"
       ></textarea>
   </div>
 
@@ -222,7 +222,7 @@
         <button
           type="button"
           onclick={oncancel}
-          class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-4 text-lg font-medium hover:bg-gray-200"
+          class="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg py-4 text-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700"
         >
           Отмена
         </button>

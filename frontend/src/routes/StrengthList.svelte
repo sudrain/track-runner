@@ -97,7 +97,7 @@
 
 <div>
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Силовые тренировки</h1>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Силовые тренировки</h1>
     <button
       onclick={() => navigate('strength-new')}
       class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700"
@@ -134,7 +134,7 @@
       </div>
       <div class="block md:hidden space-y-3">
         {#each [1, 2, 3, 4, 5] as _}
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-2">
+          <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 space-y-2">
             <div class="flex justify-between">
               <Skeleton class="h-5 w-28" />
               <Skeleton class="h-5 w-5 rounded-full" />
@@ -149,28 +149,28 @@
       </div>
     </div>
   {:else if strength.error}
-    <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
+    <div class="text-red-600 dark:text-red-400 text-base bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded px-4 py-3">{strength.error}</div>
   {:else if strength.list.length === 0}
-    <div class="text-gray-400 text-center py-12">Пока нет тренировок. Создайте первую!</div>
+    <div class="text-gray-400 dark:text-gray-500 text-center py-12">Пока нет тренировок. Создайте первую!</div>
   {:else}
     <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-base">
         <thead>
-          <tr class="border-b border-gray-200 text-left text-gray-500">
-            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Дата{sortIcon('date')}</th>
-            <th onclick={() => toggleSort('exercises')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Упражнения{sortIcon('exercises')}</th>
-            <th onclick={() => toggleSort('sets')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Подходы{sortIcon('sets')}</th>
-            <th onclick={() => toggleSort('volume')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Объём (кг){sortIcon('volume')}</th>
+          <tr class="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
+            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Дата{sortIcon('date')}</th>
+            <th onclick={() => toggleSort('exercises')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Упражнения{sortIcon('exercises')}</th>
+            <th onclick={() => toggleSort('sets')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Подходы{sortIcon('sets')}</th>
+            <th onclick={() => toggleSort('volume')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 select-none">Объём (кг){sortIcon('volume')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
           {#each sorted as workout}
-            <tr class="hover:bg-gray-50 cursor-pointer" onclick={() => goToDetail(workout.id)}>
-              <td class="py-3 text-gray-700">{formatDateShort(workout.datetime)}</td>
-              <td class="py-3 text-gray-800">{workout.exercises.map(e => e.name).join(', ')}</td>
-              <td class="py-3 text-right text-gray-700">{totalSets(workout.exercises)}</td>
-              <td class="py-3 text-right text-gray-700">{totalVolume(workout.exercises).toFixed(0)}</td>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onclick={() => goToDetail(workout.id)}>
+              <td class="py-3 text-gray-700 dark:text-gray-300">{formatDateShort(workout.datetime)}</td>
+              <td class="py-3 text-gray-800 dark:text-gray-100">{workout.exercises.map(e => e.name).join(', ')}</td>
+              <td class="py-3 text-right text-gray-700 dark:text-gray-300">{totalSets(workout.exercises)}</td>
+              <td class="py-3 text-right text-gray-700 dark:text-gray-300">{totalVolume(workout.exercises).toFixed(0)}</td>
               <td class="py-3 text-right">
                 <button
                   onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
@@ -190,12 +190,12 @@
         <div
           role="button"
           tabindex="0"
-          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 cursor-pointer active:bg-gray-50"
+          class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 cursor-pointer active:bg-gray-50 dark:active:bg-gray-800"
           onclick={() => goToDetail(workout.id)}
           onkeydown={(e) => { if (e.key === 'Enter') goToDetail(workout.id) }}
         >
           <div class="flex justify-between items-start">
-            <div class="text-sm text-gray-500">{formatDateShort(workout.datetime)}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">{formatDateShort(workout.datetime)}</div>
             <button
               onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
               class="text-red-400 hover:text-red-600 p-1 text-lg leading-none"
@@ -203,12 +203,12 @@
               ✕
             </button>
           </div>
-          <div class="flex gap-4 mt-1 text-sm text-gray-600">
-            <span class="font-medium text-gray-800">{workout.exercises.length} упражнений</span>
+          <div class="flex gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <span class="font-medium text-gray-800 dark:text-gray-100">{workout.exercises.length} упражнений</span>
             <span>{totalSets(workout.exercises)} подходов</span>
             <span>{totalVolume(workout.exercises).toFixed(0)} кг</span>
           </div>
-          <div class="text-xs text-gray-400 mt-1 truncate">
+          <div class="text-xs text-gray-400 dark:text-gray-500 mt-1 truncate">
             {workout.exercises.map(e => e.name).join(', ')}
           </div>
         </div>

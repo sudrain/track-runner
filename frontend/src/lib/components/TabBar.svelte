@@ -31,7 +31,7 @@
 </script>
 
 {#if auth.user}
-  <nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom,0px)]">
+  <nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 pb-[env(safe-area-inset-bottom,0px)]">
     <div class="flex items-center justify-around h-16">
       {#each tabs as tab}
         <button
