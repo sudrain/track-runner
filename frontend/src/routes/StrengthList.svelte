@@ -2,6 +2,7 @@
   import { strength } from '../lib/stores/workouts.svelte'
   import { navigate } from '../lib/router'
   import Pagination from '../lib/components/Pagination.svelte'
+  import Skeleton from '../lib/components/Skeleton.svelte'
   import { formatDateShort } from '../lib/utils/format'
   import { showConfirm } from '../lib/stores/confirm.svelte'
   import { showToast } from '../lib/stores/toast.svelte'
@@ -106,13 +107,53 @@
   </div>
 
   {#if strength.loading}
-    <div class="text-gray-400 text-center py-12">Loading...</div>
+    <div class="space-y-2">
+      <div class="hidden md:block">
+        <table class="w-full text-base">
+          <thead>
+            <tr class="border-b border-gray-200 text-left text-gray-500">
+              <th class="pb-3 font-medium">Date</th>
+              <th class="pb-3 font-medium">Exercises</th>
+              <th class="pb-3 font-medium text-right">Sets</th>
+              <th class="pb-3 font-medium text-right">Volume (kg)</th>
+              <th class="pb-3 font-medium text-right"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {#each [1, 2, 3, 4, 5] as _}
+              <tr>
+                <td class="py-3"><Skeleton class="h-4 w-20" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-32" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-10 ml-auto" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-16 ml-auto" /></td>
+                <td class="py-3"></td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+      <div class="block md:hidden space-y-3">
+        {#each [1, 2, 3, 4, 5] as _}
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-2">
+            <div class="flex justify-between">
+              <Skeleton class="h-5 w-28" />
+              <Skeleton class="h-5 w-5 rounded-full" />
+            </div>
+            <div class="flex gap-3">
+              <Skeleton class="h-4 w-20" />
+              <Skeleton class="h-4 w-12" />
+              <Skeleton class="h-4 w-16" />
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
   {:else if strength.error}
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
   {:else if strength.list.length === 0}
     <div class="text-gray-400 text-center py-12">No workouts yet. Create your first one!</div>
   {:else}
-    <div class="overflow-x-auto">
+    <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-base">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
@@ -142,6 +183,36 @@
           {/each}
         </tbody>
       </table>
+    </div>
+
+    <div class="block md:hidden space-y-3">
+      {#each sorted as workout}
+        <div
+          role="button"
+          tabindex="0"
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 cursor-pointer active:bg-gray-50"
+          onclick={() => goToDetail(workout.id)}
+          onkeydown={(e) => { if (e.key === 'Enter') goToDetail(workout.id) }}
+        >
+          <div class="flex justify-between items-start">
+            <div class="text-sm text-gray-500">{formatDateShort(workout.datetime)}</div>
+            <button
+              onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
+              class="text-red-400 hover:text-red-600 p-1 text-lg leading-none"
+            >
+              ✕
+            </button>
+          </div>
+          <div class="flex gap-4 mt-1 text-sm text-gray-600">
+            <span class="font-medium text-gray-800">{workout.exercises.length} exercises</span>
+            <span>{totalSets(workout.exercises)} sets</span>
+            <span>{totalVolume(workout.exercises).toFixed(0)} kg</span>
+          </div>
+          <div class="text-xs text-gray-400 mt-1 truncate">
+            {workout.exercises.map(e => e.name).join(', ')}
+          </div>
+        </div>
+      {/each}
     </div>
 
     <div class="flex justify-end gap-2 mt-4">

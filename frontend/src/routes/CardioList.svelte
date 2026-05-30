@@ -2,6 +2,7 @@
   import { cardio, type CardioIntervalOut, type CardioWorkoutOut } from '../lib/stores/workouts.svelte'
   import { navigate } from '../lib/router'
   import Pagination from '../lib/components/Pagination.svelte'
+  import Skeleton from '../lib/components/Skeleton.svelte'
   import { formatDateShort } from '../lib/utils/format'
   import { formatTempoShort } from '../lib/utils/tempo'
   import { showConfirm } from '../lib/stores/confirm.svelte'
@@ -123,13 +124,57 @@
   </div>
 
   {#if cardio.loading}
-    <div class="text-gray-400 text-center py-12">Loading...</div>
+    <div class="space-y-2">
+      <div class="hidden md:block">
+        <table class="w-full text-base">
+          <thead>
+            <tr class="border-b border-gray-200 text-left text-gray-500">
+              <th class="pb-3 font-medium">Name</th>
+              <th class="pb-3 font-medium">Date</th>
+              <th class="pb-3 font-medium text-right">Km</th>
+              <th class="pb-3 font-medium text-right">Min</th>
+              <th class="pb-3 font-medium text-right">Tempo</th>
+              <th class="pb-3 font-medium text-right">HR</th>
+              <th class="pb-3 font-medium text-right"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {#each [1, 2, 3, 4, 5] as _}
+              <tr>
+                <td class="py-3"><Skeleton class="h-4 w-24" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-20" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-12 ml-auto" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-12 ml-auto" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-14 ml-auto" /></td>
+                <td class="py-3"><Skeleton class="h-4 w-10 ml-auto" /></td>
+                <td class="py-3"></td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+      <div class="block md:hidden space-y-3">
+        {#each [1, 2, 3, 4, 5] as _}
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-2">
+            <div class="flex justify-between">
+              <Skeleton class="h-5 w-28" />
+              <Skeleton class="h-5 w-5 rounded-full" />
+            </div>
+            <div class="flex gap-3">
+              <Skeleton class="h-4 w-16" />
+              <Skeleton class="h-4 w-16" />
+              <Skeleton class="h-4 w-20" />
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
   {:else if cardio.error}
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
   {:else if cardio.list.length === 0}
     <div class="text-gray-400 text-center py-12">No workouts yet. Create your first one!</div>
   {:else}
-    <div class="overflow-x-auto">
+    <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-base">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
@@ -163,6 +208,36 @@
           {/each}
         </tbody>
       </table>
+    </div>
+
+    <div class="block md:hidden space-y-3">
+      {#each sorted as workout}
+        <div
+          role="button"
+          tabindex="0"
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 cursor-pointer active:bg-gray-50"
+          onclick={() => goToDetail(workout.id)}
+          onkeydown={(e) => { if (e.key === 'Enter') goToDetail(workout.id) }}
+        >
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="font-semibold text-gray-800">{workout.name}</div>
+              <div class="text-sm text-gray-500 mt-0.5">{formatDateShort(workout.datetime)}</div>
+            </div>
+            <button
+              onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
+              class="text-red-400 hover:text-red-600 p-1 text-lg leading-none"
+            >
+              ✕
+            </button>
+          </div>
+          <div class="flex gap-4 mt-2 text-sm text-gray-600">
+            <span>{totalKm(workout.intervals).toFixed(2)} km</span>
+            <span>{totalMin(workout.intervals).toFixed(0)} min</span>
+            <span>⏱ {formatTempoShort(workoutTempo(workout.intervals))}</span>
+          </div>
+        </div>
+      {/each}
     </div>
 
     <div class="flex justify-end gap-2 mt-4">
