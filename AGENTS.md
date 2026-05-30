@@ -7,7 +7,7 @@
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2.0 async, Alembic, Pydantic v2 |
 | DB | SQLite (dev), PostgreSQL + asyncpg (prod) |
 | Auth | bcrypt, JWT (access ~30m + refresh ~7d) в http-only cookies |
-| Frontend | Svelte 5, TypeScript 6, Vite 8, Tailwind 4, svelte-spa-router, Chart.js |
+| Frontend | Svelte 5, TypeScript 6, Vite 8, Tailwind 4 |
 | Тесты | pytest-asyncio, httpx.AsyncClient, pytest-cov |
 | Инструменты | uv (пакетный менеджер), Ruff (линтер) |
 
@@ -65,9 +65,30 @@ app/
 frontend/src/
 ├── main.ts, App.svelte, app.css
 ├── lib/
-│   ├── router.ts              # svelte-spa-router
-│   ├── stores/auth.ts         # Auth store
-│   └── components/            # Layout, Navbar
+│   ├── router.ts              # Hash-based SPA роутер
+│   ├── api/
+│   │   └── client.ts          # HTTP-клиент с auto-refresh
+│   ├── stores/
+│   │   ├── auth.svelte.ts     # Auth store
+│   │   ├── toast.svelte.ts    # Toast-уведомления
+│   │   ├── confirm.svelte.ts  # Confirm-диалог
+│   │   ├── stats.svelte.ts    # Статистика бега
+│   │   └── workouts.svelte.ts # CardioStore + StrengthStore
+│   ├── components/
+│   │   ├── Layout.svelte      # Обёртка страницы (Navbar + TabBar)
+│   │   ├── Navbar.svelte      # Верхняя навигация (десктоп)
+│   │   ├── TabBar.svelte      # Нижняя навигация (мобилки)
+│   │   ├── Skeleton.svelte    # Пульсирующий плейсхолдер загрузки
+│   │   ├── Toast.svelte       # Всплывающие уведомления
+│   │   ├── ConfirmDialog.svelte # Модальное подтверждение
+│   │   ├── Pagination.svelte  # Пагинация
+│   │   ├── CardioForm.svelte  # Форма кардиотренировки
+│   │   ├── StrengthForm.svelte # Форма силовой тренировки
+│   │   ├── IntervalList.svelte # Таблица интервалов (read-only)
+│   │   └── ExerciseList.svelte # Список упражнений (read-only)
+│   └── utils/
+│       ├── format.ts          # Форматирование дат, расстояний
+│       └── tempo.ts           # Расчёт и форматирование темпа
 └── routes/                    # Home, Login, Register, CardioList/Detail/New, StrengthList/Detail/New
 ```
 
