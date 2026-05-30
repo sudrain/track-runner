@@ -103,7 +103,7 @@
     onsubmit(parsed)
   }
 
-  let valid = $derived(datetime && exercises.some(ex => ex.name && ex.sets.some(s => s.weight_kg && s.repetitions)))
+  let valid = $derived(datetime && exercises.some(ex => ex.name && ex.sets.some(s => parseFloat(s.weight_kg) > 0 && parseInt(s.repetitions) > 0)))
 </script>
 
 <form onsubmit={handleSubmit} class="space-y-4">
