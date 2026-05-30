@@ -11,16 +11,16 @@
 </script>
 
 {#if intervals.length === 0}
-  <p class="text-gray-400 text-base">No intervals</p>
+  <p class="text-gray-400 text-base">Нет интервалов</p>
 {:else}
   <table class="w-full text-base">
     <thead>
       <tr class="border-b border-gray-200 text-left text-gray-500">
         <th class="pb-1.5 font-medium w-8">#</th>
-        <th class="pb-1.5 font-medium">Min</th>
-        <th class="pb-1.5 font-medium">Km</th>
-        <th class="pb-1.5 font-medium">Tempo</th>
-        <th class="pb-1.5 font-medium">HR</th>
+        <th class="pb-1.5 font-medium">Мин</th>
+        <th class="pb-1.5 font-medium">Км</th>
+        <th class="pb-1.5 font-medium">Темп</th>
+        <th class="pb-1.5 font-medium">Пульс</th>
       </tr>
     </thead>
     <tbody>

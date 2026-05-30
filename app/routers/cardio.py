@@ -96,7 +96,6 @@ async def get_cardio_workout(
 
 
 # Обновление (замена интервалов)
-@router.put("/{workout_id}", response_model=CardioWorkoutOut)
 @router.patch("/{workout_id}", response_model=CardioWorkoutOut)
 async def update_cardio_workout(
     workout_id: int,
@@ -116,10 +115,9 @@ async def update_cardio_workout(
     if not workout:
         raise HTTPException(status_code=404, detail="Workout not found")
 
-    # Частичное обновление полей
-    if data.name is not None:
+    if "name" in data.model_fields_set:
         workout.name = data.name  # type: ignore[assignment]
-    if data.datetime is not None:
+    if "datetime" in data.model_fields_set:
         workout.datetime = data.datetime  # type: ignore[assignment]
     if "notes" in data.model_fields_set:
         workout.notes = data.notes

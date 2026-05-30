@@ -13,7 +13,7 @@
 </script>
 
 <div class="max-w-sm mx-auto mt-12">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h1>
+  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Вход</h1>
 
   <form onsubmit={handleSubmit} class="space-y-5">
     {#if auth.error}
@@ -32,7 +32,7 @@
     </div>
 
     <div>
-      <label for="password" class="block text-base font-medium text-gray-700 mb-1.5">Password</label>
+      <label for="password" class="block text-base font-medium text-gray-700 mb-1.5">Пароль</label>
       <input
         id="password"
         type="password"
@@ -47,12 +47,12 @@
       disabled={auth.loading}
       class="w-full bg-indigo-600 text-white rounded-lg px-4 py-3.5 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {auth.loading ? 'Loading...' : 'Login'}
+      {auth.loading ? 'Загрузка...' : 'Войти'}
     </button>
   </form>
 
   <p class="text-base text-gray-500 text-center mt-5">
-    Don't have an account?
-    <a href="#/register" class="text-indigo-600 hover:underline">Register</a>
+    Нет аккаунта?
+    <a href="#/register" class="text-indigo-600 hover:underline">Регистрация</a>
   </p>
 </div>

@@ -79,14 +79,14 @@
   }
 
   async function deleteWorkout(id: number) {
-    const ok = await showConfirm('Delete this workout?')
+    const ok = await showConfirm('Удалить эту тренировку?')
     if (!ok) return
     try {
       await cardio.remove(id)
-      showToast('Workout deleted')
+      showToast('Тренировка удалена')
       cardio.fetchList(offset, limit)
     } catch {
-      showToast('Failed to delete workout', 'error')
+      showToast('Ошибка удаления тренировки', 'error')
     }
   }
 
@@ -114,12 +114,12 @@
 
 <div>
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Cardio Workouts</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Кардио-тренировки</h1>
     <button
       onclick={() => navigate('cardio-new')}
       class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700"
     >
-      + New Workout
+      + Новая
     </button>
   </div>
 
@@ -129,12 +129,12 @@
         <table class="w-full text-base">
           <thead>
             <tr class="border-b border-gray-200 text-left text-gray-500">
-              <th class="pb-3 font-medium">Name</th>
-              <th class="pb-3 font-medium">Date</th>
-              <th class="pb-3 font-medium text-right">Km</th>
-              <th class="pb-3 font-medium text-right">Min</th>
-              <th class="pb-3 font-medium text-right">Tempo</th>
-              <th class="pb-3 font-medium text-right">HR</th>
+              <th class="pb-3 font-medium">Название</th>
+              <th class="pb-3 font-medium">Дата</th>
+              <th class="pb-3 font-medium text-right">Км</th>
+              <th class="pb-3 font-medium text-right">Мин</th>
+              <th class="pb-3 font-medium text-right">Темп</th>
+              <th class="pb-3 font-medium text-right">Пульс</th>
               <th class="pb-3 font-medium text-right"></th>
             </tr>
           </thead>
@@ -172,18 +172,18 @@
   {:else if cardio.error}
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
   {:else if cardio.list.length === 0}
-    <div class="text-gray-400 text-center py-12">No workouts yet. Create your first one!</div>
+    <div class="text-gray-400 text-center py-12">Пока нет тренировок. Создайте первую!</div>
   {:else}
     <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-base">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
-            <th onclick={() => toggleSort('name')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Name{sortIcon('name')}</th>
-            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Date{sortIcon('date')}</th>
-            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Km{sortIcon('distance')}</th>
-            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Min{sortIcon('duration')}</th>
-            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Tempo{sortIcon('tempo')}</th>
-            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">HR{sortIcon('hr')}</th>
+            <th onclick={() => toggleSort('name')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Название{sortIcon('name')}</th>
+            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Дата{sortIcon('date')}</th>
+            <th onclick={() => toggleSort('distance')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Км{sortIcon('distance')}</th>
+            <th onclick={() => toggleSort('duration')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Мин{sortIcon('duration')}</th>
+            <th onclick={() => toggleSort('tempo')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Темп{sortIcon('tempo')}</th>
+            <th onclick={() => toggleSort('hr')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Пульс{sortIcon('hr')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>
@@ -201,7 +201,7 @@
                   onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
                   class="text-red-400 hover:text-red-600 text-sm"
                 >
-                  Delete
+                  Удалить
                 </button>
               </td>
             </tr>
@@ -232,8 +232,8 @@
             </button>
           </div>
           <div class="flex gap-4 mt-2 text-sm text-gray-600">
-            <span>{totalKm(workout.intervals).toFixed(2)} km</span>
-            <span>{totalMin(workout.intervals).toFixed(0)} min</span>
+            <span>{totalKm(workout.intervals).toFixed(2)} км</span>
+            <span>{totalMin(workout.intervals).toFixed(0)} мин</span>
             <span>⏱ {formatTempoShort(workoutTempo(workout.intervals))}</span>
           </div>
         </div>
@@ -245,7 +245,7 @@
         onclick={exportCsv}
         class="text-sm text-gray-400 hover:text-gray-600 font-medium"
       >
-        Export CSV
+        Экспорт CSV
       </button>
     </div>
 

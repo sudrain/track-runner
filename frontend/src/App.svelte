@@ -5,7 +5,7 @@
   import Skeleton from './lib/components/Skeleton.svelte'
   import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
-  import { route as router, navigate, parseHash } from './lib/router.svelte'
+  import { route as router, parseHash } from './lib/router.svelte'
   import { auth } from './lib/stores/auth.svelte'
   import Home from './routes/Home.svelte'
   import Login from './routes/Login.svelte'

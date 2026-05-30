@@ -71,7 +71,7 @@
       datetime: fromDatetimeLocal(datetime),
       notes,
       intervals: intervals
-        .filter(i => i.duration_minutes && i.distance_km)
+        .filter(i => parseFloat(i.duration_minutes) > 0 && parseFloat(i.distance_km) > 0)
         .map(i => {
           const tempoParsed = parseTempo(i.tempo)
           return {
@@ -92,7 +92,7 @@
   <form onsubmit={handleSubmit} class="space-y-4">
   {#if cardio.templatesLoading}
     <select disabled class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg bg-gray-100 text-gray-400">
-      <option>Loading...</option>
+      <option>Загрузка...</option>
     </select>
   {:else}
     <select
@@ -101,7 +101,7 @@
       required
       class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
     >
-      <option value="" disabled>Select workout type...</option>
+      <option value="" disabled>Выберите тип тренировки...</option>
       {#each cardio.templates as tpl (tpl.id)}
         <option value={tpl.name}>{tpl.name}</option>
       {/each}
@@ -121,7 +121,7 @@
       {#each intervals as interval, i}
         <div class="flex items-end gap-1.5 md:gap-2">
           <div class="w-16 md:flex-1 md:min-w-[140px]">
-            <label for="duration-{i}" class="block text-base text-gray-500 mb-0.5">Min</label>
+            <label for="duration-{i}" class="block text-base text-gray-500 mb-0.5">Мин</label>
             <input
               id="duration-{i}"
               type="number"
@@ -133,7 +133,7 @@
             />
           </div>
           <div class="w-20 md:flex-1 md:min-w-[140px]">
-            <label for="distance-{i}" class="block text-base text-gray-500 mb-0.5">Km</label>
+            <label for="distance-{i}" class="block text-base text-gray-500 mb-0.5">Км</label>
             <input
               id="distance-{i}"
               type="number"
@@ -145,7 +145,7 @@
             />
           </div>
           <div class="w-20 md:w-28">
-            <label for="tempo-{i}" class="block text-base text-gray-500 mb-0.5">Tempo</label>
+            <label for="tempo-{i}" class="block text-base text-gray-500 mb-0.5">Темп</label>
             <input
               id="tempo-{i}"
               type="text"
@@ -155,7 +155,7 @@
             />
           </div>
           <div class="w-16 md:flex-1 md:min-w-[100px]">
-            <label for="hr-{i}" class="block text-base text-gray-500 mb-0.5">HR</label>
+            <label for="hr-{i}" class="block text-base text-gray-500 mb-0.5">Пульс</label>
             <input
               id="hr-{i}"
               type="number"
@@ -178,7 +178,7 @@
       {/each}
       <div class="flex justify-start">
         <button type="button" onclick={addInterval} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
-          + Add interval
+          + Добавить интервал
         </button>
       </div>
       <textarea
@@ -196,7 +196,7 @@
       disabled={!valid || saving}
       class="flex-1 bg-indigo-600 text-white rounded-lg py-4 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {saving ? 'Saving...' : 'Save'}
+      {saving ? 'Сохранение...' : 'Сохранить'}
     </button>
     {#if oncancel}
       <button
@@ -204,7 +204,7 @@
         onclick={oncancel}
         class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-4 text-lg font-medium hover:bg-gray-200"
       >
-        Cancel
+        Отмена
       </button>
     {/if}
   </div>

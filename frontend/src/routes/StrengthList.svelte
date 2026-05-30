@@ -75,14 +75,14 @@
   }
 
   async function deleteWorkout(id: number) {
-    const ok = await showConfirm('Delete this workout?')
+    const ok = await showConfirm('Удалить эту тренировку?')
     if (!ok) return
     try {
       await strength.remove(id)
-      showToast('Workout deleted')
+      showToast('Тренировка удалена')
       strength.fetchList(offset, limit)
     } catch {
-      showToast('Failed to delete workout', 'error')
+      showToast('Ошибка удаления тренировки', 'error')
     }
   }
 
@@ -97,12 +97,12 @@
 
 <div>
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Strength Workouts</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Силовые тренировки</h1>
     <button
       onclick={() => navigate('strength-new')}
       class="bg-indigo-600 text-white rounded-lg px-5 py-3 text-base font-medium hover:bg-indigo-700"
     >
-      + New Workout
+      + Новая
     </button>
   </div>
 
@@ -112,10 +112,10 @@
         <table class="w-full text-base">
           <thead>
             <tr class="border-b border-gray-200 text-left text-gray-500">
-              <th class="pb-3 font-medium">Date</th>
-              <th class="pb-3 font-medium">Exercises</th>
-              <th class="pb-3 font-medium text-right">Sets</th>
-              <th class="pb-3 font-medium text-right">Volume (kg)</th>
+              <th class="pb-3 font-medium">Дата</th>
+              <th class="pb-3 font-medium">Упражнения</th>
+              <th class="pb-3 font-medium text-right">Подходы</th>
+              <th class="pb-3 font-medium text-right">Объём (кг)</th>
               <th class="pb-3 font-medium text-right"></th>
             </tr>
           </thead>
@@ -151,16 +151,16 @@
   {:else if strength.error}
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
   {:else if strength.list.length === 0}
-    <div class="text-gray-400 text-center py-12">No workouts yet. Create your first one!</div>
+    <div class="text-gray-400 text-center py-12">Пока нет тренировок. Создайте первую!</div>
   {:else}
     <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-base">
         <thead>
           <tr class="border-b border-gray-200 text-left text-gray-500">
-            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Date{sortIcon('date')}</th>
-            <th onclick={() => toggleSort('exercises')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Exercises{sortIcon('exercises')}</th>
-            <th onclick={() => toggleSort('sets')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Sets{sortIcon('sets')}</th>
-            <th onclick={() => toggleSort('volume')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Volume (kg){sortIcon('volume')}</th>
+            <th onclick={() => toggleSort('date')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Дата{sortIcon('date')}</th>
+            <th onclick={() => toggleSort('exercises')} class="pb-3 font-medium cursor-pointer hover:text-gray-700 select-none">Упражнения{sortIcon('exercises')}</th>
+            <th onclick={() => toggleSort('sets')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Подходы{sortIcon('sets')}</th>
+            <th onclick={() => toggleSort('volume')} class="pb-3 font-medium text-right cursor-pointer hover:text-gray-700 select-none">Объём (кг){sortIcon('volume')}</th>
             <th class="pb-3 font-medium text-right"></th>
           </tr>
         </thead>
@@ -176,7 +176,7 @@
                   onclick={(e) => { e.stopPropagation(); deleteWorkout(workout.id) }}
                   class="text-red-400 hover:text-red-600 text-sm"
                 >
-                  Delete
+                  Удалить
                 </button>
               </td>
             </tr>
@@ -204,9 +204,9 @@
             </button>
           </div>
           <div class="flex gap-4 mt-1 text-sm text-gray-600">
-            <span class="font-medium text-gray-800">{workout.exercises.length} exercises</span>
-            <span>{totalSets(workout.exercises)} sets</span>
-            <span>{totalVolume(workout.exercises).toFixed(0)} kg</span>
+            <span class="font-medium text-gray-800">{workout.exercises.length} упражнений</span>
+            <span>{totalSets(workout.exercises)} подходов</span>
+            <span>{totalVolume(workout.exercises).toFixed(0)} кг</span>
           </div>
           <div class="text-xs text-gray-400 mt-1 truncate">
             {workout.exercises.map(e => e.name).join(', ')}
@@ -220,7 +220,7 @@
         onclick={exportCsv}
         class="text-sm text-gray-400 hover:text-gray-600 font-medium"
       >
-        Export CSV
+        Экспорт CSV
       </button>
     </div>
 

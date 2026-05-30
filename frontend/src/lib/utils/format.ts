@@ -15,15 +15,15 @@ export function formatDateShort(iso: string): string {
 }
 
 export function formatDistance(km: number): string {
-  if (km >= 1) return `${km.toFixed(2)} km`
-  return `${(km * 1000).toFixed(0)} m`
+  if (km >= 1) return `${km.toFixed(2)} км`
+  return `${(km * 1000).toFixed(0)} м`
 }
 
 export function formatDuration(minutes: number): string {
   const h = Math.floor(minutes / 60)
   const m = Math.round(minutes % 60)
-  if (h === 0) return `${m} min`
-  return `${h}h ${m}min`
+  if (h === 0) return `${m} мин`
+  return `${h}ч ${m}мин`
 }
 
 export function toDatetimeLocal(iso: string): string {

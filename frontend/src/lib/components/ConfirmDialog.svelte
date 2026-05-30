@@ -24,13 +24,13 @@
           onclick={confirmNo}
           class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 rounded-lg hover:bg-gray-100"
         >
-          Cancel
+          Отмена
         </button>
         <button
           onclick={confirmYes}
           class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
         >
-          Delete
+          Удалить
         </button>
       </div>
     </div>

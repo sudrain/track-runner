@@ -11,7 +11,7 @@
     localError = null
 
     if (password !== confirm) {
-      localError = 'Passwords do not match'
+      localError = 'Пароли не совпадают'
       return
     }
 
@@ -24,7 +24,7 @@
 </script>
 
 <div class="max-w-sm mx-auto mt-12">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Register</h1>
+  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Регистрация</h1>
 
   <form onsubmit={handleSubmit} class="space-y-5">
     {#if err}
@@ -43,7 +43,7 @@
     </div>
 
     <div>
-      <label for="password" class="block text-base font-medium text-gray-700 mb-1.5">Password</label>
+      <label for="password" class="block text-base font-medium text-gray-700 mb-1.5">Пароль</label>
       <input
         id="password"
         type="password"
@@ -55,7 +55,7 @@
     </div>
 
     <div>
-      <label for="confirm" class="block text-base font-medium text-gray-700 mb-1.5">Confirm Password</label>
+      <label for="confirm" class="block text-base font-medium text-gray-700 mb-1.5">Подтвердите пароль</label>
       <input
         id="confirm"
         type="password"
@@ -70,12 +70,12 @@
       disabled={auth.loading}
       class="w-full bg-indigo-600 text-white rounded-lg px-4 py-3.5 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {auth.loading ? 'Loading...' : 'Register'}
+      {auth.loading ? 'Загрузка...' : 'Зарегистрироваться'}
     </button>
   </form>
 
   <p class="text-base text-gray-500 text-center mt-5">
-    Already have an account?
-    <a href="#/login" class="text-indigo-600 hover:underline">Login</a>
+    Уже есть аккаунт?
+    <a href="#/login" class="text-indigo-600 hover:underline">Войти</a>
   </p>
 </div>

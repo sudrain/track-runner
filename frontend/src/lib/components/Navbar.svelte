@@ -23,32 +23,32 @@
           class="hover:text-indigo-200 {route.name === 'cardio' || route.name === 'cardio-new' || route.name === 'cardio-detail' ? 'text-indigo-100 border-b border-indigo-300' : 'text-white'}"
           onclick={() => navigate('cardio')}
         >
-          Cardio
+          Кардио
         </button>
         <button
           class="hover:text-indigo-200 {route.name === 'strength' || route.name === 'strength-new' || route.name === 'strength-detail' ? 'text-indigo-100 border-b border-indigo-300' : 'text-white'}"
           onclick={() => navigate('strength')}
         >
-          Strength
+          Силовая
         </button>
         <button
           class="hover:text-indigo-200 {route.name === 'home' ? 'text-indigo-100 border-b border-indigo-300' : 'text-white'}"
           onclick={() => navigate('home')}
         >
-          Stats
+          Статистика
         </button>
         <button
           class="bg-indigo-600 hover:bg-indigo-500 border border-indigo-400 px-4 py-2 rounded"
           onclick={() => auth.logout()}
         >
-          Logout
+          Выйти
         </button>
       {:else}
         <button
           class="hover:text-indigo-200 {route.name === 'login' ? 'text-indigo-100 border-b border-indigo-300' : 'text-white'}"
           onclick={() => navigate('login')}
         >
-          Login
+          Войти
         </button>
         <button
           class="hover:text-indigo-200 {route.name === 'register' ? 'text-indigo-100 border-b border-indigo-300' : 'text-white'}"
@@ -62,7 +62,7 @@
     <button
       class="md:hidden text-3xl p-1"
       onclick={() => mobileOpen = !mobileOpen}
-      aria-label="Menu"
+      aria-label="Меню"
     >
       {mobileOpen ? '✕' : '☰'}
     </button>
@@ -87,26 +87,26 @@
           class="w-full text-left px-4 py-3 hover:bg-indigo-600 {route.name === 'strength' || route.name === 'strength-new' || route.name === 'strength-detail' ? 'bg-indigo-600' : ''}"
           onclick={() => nav('strength')}
         >
-          Strength
+          Силовая
         </button>
         <button
           class="w-full text-left px-4 py-3 hover:bg-indigo-600"
           onclick={() => { mobileOpen = false; auth.logout() }}
         >
-          Logout
+          Выйти
         </button>
       {:else}
         <button
           class="w-full text-left px-4 py-3 hover:bg-indigo-600 {route.name === 'login' ? 'bg-indigo-600' : ''}"
           onclick={() => nav('login')}
         >
-          Login
+          Войти
         </button>
         <button
           class="w-full text-left px-4 py-3 hover:bg-indigo-600 {route.name === 'register' ? 'bg-indigo-600' : ''}"
           onclick={() => nav('register')}
         >
-          Register
+          Регистрация
         </button>
       {/if}
     </div>

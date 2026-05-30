@@ -42,12 +42,18 @@ export function parseHash(): Route {
   if (parts[0] === 'register') return { name: 'register' }
   if (parts[0] === 'cardio') {
     if (parts[1] === 'new') return { name: 'cardio-new' }
-    if (parts[1]) return { name: 'cardio-detail', id: Number(parts[1]) }
+    if (parts[1]) {
+      const id = Number(parts[1])
+      if (!isNaN(id)) return { name: 'cardio-detail', id }
+    }
     return { name: 'cardio' }
   }
   if (parts[0] === 'strength') {
     if (parts[1] === 'new') return { name: 'strength-new' }
-    if (parts[1]) return { name: 'strength-detail', id: Number(parts[1]) }
+    if (parts[1]) {
+      const id = Number(parts[1])
+      if (!isNaN(id)) return { name: 'strength-detail', id }
+    }
     return { name: 'strength' }
   }
   return { name: 'home' }

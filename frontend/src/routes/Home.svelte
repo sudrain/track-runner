@@ -70,17 +70,17 @@
     {:else if stats.data}
       <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4">
-          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Week</p>
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Неделя</p>
           <p class="text-xl sm:text-2xl font-bold text-indigo-600">{stats.data.week_km.toFixed(1)} km</p>
           <p class="text-xs text-gray-400 mt-1">{formatTempoShort(stats.data.week_avg_tempo)} /km</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4">
-          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Month</p>
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Месяц</p>
           <p class="text-xl sm:text-2xl font-bold text-indigo-600">{stats.data.month_km.toFixed(1)} km</p>
           <p class="text-xs text-gray-400 mt-1">{formatTempoShort(stats.data.month_avg_tempo)} /km</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4">
-          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Year</p>
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Год</p>
           <p class="text-xl sm:text-2xl font-bold text-indigo-600">{stats.data.year_km.toFixed(1)} km</p>
           <p class="text-xs text-gray-400 mt-1">{formatTempoShort(stats.data.year_avg_tempo)} /km</p>
         </div>
@@ -92,13 +92,13 @@
         onclick={() => navigate('cardio-new')}
         class="flex-1 bg-indigo-600 text-white rounded-xl px-8 py-6 sm:px-6 sm:py-4 text-xl sm:text-lg font-bold hover:bg-indigo-700 active:bg-indigo-800 shadow-md"
       >
-        Cardio
+        Кардио
       </button>
       <button
         onclick={() => navigate('strength-new')}
         class="flex-1 bg-indigo-600 text-white rounded-xl px-8 py-6 sm:px-6 sm:py-4 text-xl sm:text-lg font-bold hover:bg-indigo-700 active:bg-indigo-800 shadow-md"
       >
-        Strength
+        Силовая
       </button>
     </div>
 
@@ -120,9 +120,9 @@
     {:else}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
-          <h2 class="text-base font-semibold text-gray-700 mb-3">Recent Cardio</h2>
+          <h2 class="text-base font-semibold text-gray-700 mb-3">Последние кардио</h2>
           {#if recentCardio.length === 0}
-            <p class="text-gray-400 text-base">No cardio workouts yet</p>
+            <p class="text-gray-400 text-base">Пока нет кардио-тренировок</p>
           {:else}
             <div class="space-y-2">
               {#each recentCardio as w}
@@ -135,7 +135,7 @@
                     <span class="text-gray-400 ml-2">{formatDateShort(w.datetime)}</span>
                   </div>
                   <span class="text-gray-500">
-                    {totalKm(w.intervals).toFixed(2)} km · {formatTempoShort(workoutTempo(w.intervals))}
+                    {totalKm(w.intervals).toFixed(2)} км · {formatTempoShort(workoutTempo(w.intervals))}
                   </span>
                 </button>
               {/each}
@@ -144,9 +144,9 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <h2 class="text-base font-semibold text-gray-700 mb-3">Recent Strength</h2>
+          <h2 class="text-base font-semibold text-gray-700 mb-3">Последние силовые</h2>
           {#if recentStrength.length === 0}
-            <p class="text-gray-400 text-base">No strength workouts yet</p>
+            <p class="text-gray-400 text-base">Пока нет силовых тренировок</p>
           {:else}
             <div class="space-y-2">
               {#each recentStrength as w}
@@ -159,7 +159,7 @@
                     <span class="text-gray-400 ml-2">{formatDateShort(w.datetime)}</span>
                   </div>
                   <span class="text-gray-500">
-                    {totalVolume(w.exercises).toFixed(0)} kg
+                    {totalVolume(w.exercises).toFixed(0)} кг
                   </span>
                 </button>
               {/each}
@@ -172,19 +172,19 @@
 {:else}
   <div class="text-center py-16">
     <h1 class="text-4xl font-bold text-gray-800 mb-4">Track Runner</h1>
-    <p class="text-gray-500 text-lg mb-8">Your workout diary</p>
+    <p class="text-gray-500 text-lg mb-8">Ваш дневник тренировок</p>
     <div class="flex gap-4 justify-center">
       <a
         href="#/login"
         class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
       >
-        Login
+        Войти
       </a>
       <a
         href="#/register"
         class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300"
       >
-        Register
+        Регистрация
       </a>
     </div>
   </div>

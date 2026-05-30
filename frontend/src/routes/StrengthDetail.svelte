@@ -24,24 +24,24 @@
     error = null
     try {
       await strength.update(id, data)
-      showToast('Workout updated')
+      showToast('Тренировка обновлена')
       editing = false
     } catch (e) {
-      error = e instanceof ApiError ? e.detail : 'Failed to update workout'
+      error = e instanceof ApiError ? e.detail : 'Ошибка обновления тренировки'
     } finally {
       saving = false
     }
   }
 
   async function handleDelete() {
-    const ok = await showConfirm('Delete this workout?')
+    const ok = await showConfirm('Удалить эту тренировку?')
     if (!ok) return
     try {
       await strength.remove(id)
-      showToast('Workout deleted')
+      showToast('Тренировка удалена')
       navigate('strength')
     } catch {
-      showToast('Failed to delete workout', 'error')
+      showToast('Ошибка удаления тренировки', 'error')
     }
   }
 
@@ -56,7 +56,7 @@
 
 <div class="max-w-2xl mx-auto">
   <button onclick={() => navigate('strength')} class="text-base text-indigo-600 hover:text-indigo-800 mb-4 block">
-    ← Back to list
+    ← Назад к списку
   </button>
 
   {#if strength.currentLoading}
@@ -81,7 +81,7 @@
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
   {:else if w}
     {#if editing}
-      <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Workout</h1>
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Редактировать тренировку</h1>
 
       {#if error}
         <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
@@ -94,7 +94,7 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-start justify-between mb-4">
           <div>
-            <h1 class="text-2xl font-bold text-gray-800">Strength Workout</h1>
+            <h1 class="text-2xl font-bold text-gray-800">Силовая тренировка</h1>
             <p class="text-base text-gray-500 mt-1">{formatDateShort(w.datetime)}</p>
           </div>
           <div class="flex gap-3">
@@ -102,13 +102,13 @@
               onclick={() => editing = true}
               class="text-base text-indigo-600 hover:text-indigo-800 font-medium"
             >
-              Edit
+              Редактировать
             </button>
             <button
               onclick={handleDelete}
               class="text-base text-red-500 hover:text-red-700 font-medium"
             >
-              Delete
+              Удалить
             </button>
           </div>
         </div>
@@ -119,21 +119,21 @@
 
         <div class="flex gap-6 mb-4 text-lg">
           <div>
-            <span class="text-gray-400">Exercises</span>
+            <span class="text-gray-400">Упражнения</span>
             <p class="font-semibold text-gray-800">{w.exercises.length}</p>
           </div>
           <div>
-            <span class="text-gray-400">Total sets</span>
+            <span class="text-gray-400">Подходы</span>
             <p class="font-semibold text-gray-800">{totalSets}</p>
           </div>
           <div>
-            <span class="text-gray-400">Volume (kg)</span>
+            <span class="text-gray-400">Объём (кг)</span>
             <p class="font-semibold text-gray-800">{totalVolume.toFixed(0)}</p>
           </div>
         </div>
 
         <div class="border-t border-gray-100 pt-4">
-          <h3 class="text-base font-medium text-gray-700 mb-2">Exercises ({w.exercises.length})</h3>
+          <h3 class="text-base font-medium text-gray-700 mb-2">Упражнения ({w.exercises.length})</h3>
           <ExerciseList exercises={w.exercises} />
         </div>
       </div>

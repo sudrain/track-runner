@@ -18,7 +18,7 @@
 
 <div class="flex items-center justify-between mt-6 text-base">
   <div class="flex items-center gap-2 text-gray-500">
-    <span>Rows:</span>
+    <span>Строк:</span>
     <select
       value={limit}
       onchange={changeLimit}
@@ -38,18 +38,18 @@
         onclick={() => onpagechange(0)}
         class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
-        First
+        Первая
       </button>
       <button
         disabled={currentPage === 1}
         onclick={() => onpagechange((currentPage - 2) * limit)}
         class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
-        Prev
+        Назад
       </button>
 
       <span class="text-gray-600 px-2">
-        Page {currentPage} of {totalPages}
+        Стр. {currentPage} из {totalPages}
       </span>
 
       <button
@@ -57,14 +57,14 @@
         onclick={() => onpagechange(currentPage * limit)}
         class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
-        Next
+        Вперёд
       </button>
       <button
         disabled={currentPage === totalPages}
         onclick={() => onpagechange((totalPages - 1) * limit)}
         class="px-4 py-1.5 rounded border border-gray-300 disabled:opacity-30 hover:bg-gray-100"
       >
-        Last
+        Последняя
       </button>
     </div>
   {/if}

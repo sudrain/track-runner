@@ -102,7 +102,6 @@ async def get_strength_workout(
     return workout
 
 
-@router.put("/{workout_id}", response_model=StrengthWorkoutOut)
 @router.patch("/{workout_id}", response_model=StrengthWorkoutOut)
 async def update_strength_workout(
     workout_id: int,
@@ -124,7 +123,7 @@ async def update_strength_workout(
     if not workout:
         raise HTTPException(status_code=404, detail="Workout not found")
 
-    if data.datetime is not None:
+    if "datetime" in data.model_fields_set:
         workout.datetime = data.datetime  # type: ignore[assignment]
     if "notes" in data.model_fields_set:
         workout.notes = data.notes  # type: ignore[assignment]

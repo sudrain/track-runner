@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cardio, type CardioWorkoutCreate, type CardioIntervalOut } from '../lib/stores/workouts.svelte'
+  import { cardio, type CardioWorkoutCreate } from '../lib/stores/workouts.svelte'
   import { ApiError } from '../lib/api/client'
   import { navigate } from '../lib/router.svelte'
   import CardioForm from '../lib/components/CardioForm.svelte'
@@ -25,24 +25,24 @@
     error = null
     try {
       await cardio.update(id, data)
-      showToast('Workout updated')
+      showToast('Тренировка обновлена')
       editing = false
     } catch (e) {
-      error = e instanceof ApiError ? e.detail : 'Failed to update workout'
+      error = e instanceof ApiError ? e.detail : 'Ошибка обновления тренировки'
     } finally {
       saving = false
     }
   }
 
   async function handleDelete() {
-    const ok = await showConfirm('Delete this workout?')
+    const ok = await showConfirm('Удалить эту тренировку?')
     if (!ok) return
     try {
       await cardio.remove(id)
-      showToast('Workout deleted')
+      showToast('Тренировка удалена')
       navigate('cardio')
     } catch {
-      showToast('Failed to delete workout', 'error')
+      showToast('Ошибка удаления тренировки', 'error')
     }
   }
 
@@ -58,7 +58,7 @@
 
 <div class="max-w-2xl mx-auto">
   <button onclick={() => navigate('cardio')} class="text-base text-indigo-600 hover:text-indigo-800 mb-4 block">
-    ← Back to list
+    ← Назад к списку
   </button>
 
   {#if cardio.currentLoading}
@@ -81,7 +81,7 @@
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
   {:else if w}
     {#if editing}
-      <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit: {w.name}</h1>
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Редактировать: {w.name}</h1>
 
       {#if error}
         <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
@@ -102,13 +102,13 @@
               onclick={() => editing = true}
               class="text-base text-indigo-600 hover:text-indigo-800 font-medium"
             >
-              Edit
+              Редактировать
             </button>
             <button
               onclick={handleDelete}
               class="text-base text-red-500 hover:text-red-700 font-medium"
             >
-              Delete
+              Удалить
             </button>
           </div>
         </div>
@@ -119,21 +119,21 @@
 
         <div class="flex gap-6 mb-4 text-lg">
           <div>
-            <span class="text-gray-400">Km</span>
+            <span class="text-gray-400">Км</span>
             <p class="font-semibold text-gray-800">{totalKm.toFixed(2)}</p>
           </div>
           <div>
-            <span class="text-gray-400">Min</span>
+            <span class="text-gray-400">Мин</span>
             <p class="font-semibold text-gray-800">{totalMin.toFixed(0)}</p>
           </div>
           <div>
-            <span class="text-gray-400">Tempo</span>
+            <span class="text-gray-400">Темп</span>
             <p class="font-semibold text-gray-800">{formatTempoShort(tempo)}</p>
           </div>
         </div>
 
         <div class="border-t border-gray-100 pt-4">
-          <h3 class="text-base font-medium text-gray-700 mb-2">Intervals ({w.intervals.length})</h3>
+          <h3 class="text-base font-medium text-gray-700 mb-2">Интервалы ({w.intervals.length})</h3>
           <IntervalList intervals={w.intervals} />
         </div>
       </div>

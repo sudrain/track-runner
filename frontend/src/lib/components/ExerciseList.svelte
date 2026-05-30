@@ -5,7 +5,7 @@
 </script>
 
 {#if exercises.length === 0}
-  <p class="text-gray-400 text-base">No exercises</p>
+  <p class="text-gray-400 text-base">Нет упражнений</p>
 {:else}
   <div class="space-y-3">
     {#each exercises as exercise}
@@ -15,8 +15,8 @@
           <thead>
             <tr class="text-left text-gray-400">
               <th class="w-8 pb-1">#</th>
-              <th class="pb-1">Weight (kg)</th>
-              <th class="pb-1">Reps</th>
+              <th class="pb-1">Вес (кг)</th>
+              <th class="pb-1">Повт</th>
             </tr>
           </thead>
           <tbody>

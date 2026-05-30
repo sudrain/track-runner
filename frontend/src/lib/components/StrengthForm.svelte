@@ -92,7 +92,7 @@
         .map(ex => ({
           name: ex.name,
           sets: ex.sets
-            .filter(s => s.weight_kg && s.repetitions)
+            .filter(s => parseFloat(s.weight_kg) > 0 && parseInt(s.repetitions, 10) > 0)
             .map(s => ({
               weight_kg: parseFloat(s.weight_kg),
               repetitions: parseInt(s.repetitions, 10),
@@ -115,14 +115,14 @@
     class="w-full border border-gray-300 rounded-lg px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
   />
 
-  <div>
+  <div class="space-y-4">
     {#each exercises as exercise, exIndex}
       <div class="border border-gray-200 rounded-lg px-4 py-3">
         <div class="flex items-center justify-between mb-2">
           <div class="flex-1 mr-2">
             {#if strength.templatesLoading}
               <select disabled class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg bg-gray-100 text-gray-400">
-                <option>Loading...</option>
+                <option>Загрузка...</option>
               </select>
             {:else}
               <select
@@ -131,7 +131,7 @@
                 onchange={(e) => updateExerciseName(exIndex, (e.target as HTMLSelectElement).value)}
                 class="w-full border border-gray-300 rounded px-3 py-5 sm:py-4 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
               >
-                <option value="" disabled>Select exercise...</option>
+                <option value="" disabled>Выберите упражнение...</option>
                 {#each strength.templates as tpl (tpl.id)}
                   <option value={tpl.name}>{tpl.name}</option>
                 {/each}
@@ -153,7 +153,7 @@
             <div class="flex items-end justify-between gap-1.5 md:gap-2">
               <div class="flex gap-1.5 md:gap-2 min-w-0">
                 <div class="w-20 md:flex-1 md:min-w-[140px]">
-                  <label for="weight-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Wt,kg</label>
+                  <label for="weight-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Вес,кг</label>
                     <input
                       id="weight-{exIndex}-{setIndex}"
                       type="number"
@@ -166,7 +166,7 @@
                     />
                 </div>
                 <div class="w-16 md:flex-1 md:min-w-[100px]">
-                  <label for="reps-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Reps</label>
+                  <label for="reps-{exIndex}-{setIndex}" class="block text-base text-gray-500 mb-0.5">Повт</label>
                     <input
                       id="reps-{exIndex}-{setIndex}"
                       type="number"
@@ -190,7 +190,7 @@
           {/each}
           <div class="flex justify-start">
             <button type="button" onclick={() => addSet(exIndex)} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
-              + Add set
+              + Добавить подход
             </button>
           </div>
         </div>
@@ -198,7 +198,7 @@
     {/each}
       <div class="flex justify-start">
         <button type="button" onclick={addExercise} class="bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-base font-medium hover:bg-indigo-700">
-          + Add exercise
+          + Добавить упражнение
         </button>
       </div>
       <textarea
@@ -216,7 +216,7 @@
         disabled={!valid || saving}
         class="flex-1 bg-indigo-600 text-white rounded-lg py-4 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {saving ? 'Saving...' : 'Save'}
+        {saving ? 'Сохранение...' : 'Сохранить'}
       </button>
       {#if oncancel}
         <button
@@ -224,7 +224,7 @@
           onclick={oncancel}
           class="flex-1 bg-gray-100 text-gray-700 rounded-lg py-4 text-lg font-medium hover:bg-gray-200"
         >
-          Cancel
+          Отмена
         </button>
       {/if}
   </div>

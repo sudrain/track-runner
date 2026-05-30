@@ -13,7 +13,7 @@
     error = null
     try {
       const workout = await cardio.create(data)
-      showToast('Workout created')
+      showToast('Тренировка создана')
       navigate('cardio-detail', { id: workout.id })
     } catch (e) {
       error = e instanceof ApiError ? e.detail : 'Failed to create workout'
@@ -28,7 +28,7 @@
 </script>
 
 <div class="max-w-2xl mx-auto">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">New Cardio Workout</h1>
+  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Новая кардио-тренировка</h1>
 
   {#if error}
     <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{error}</div>
