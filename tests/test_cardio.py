@@ -138,7 +138,7 @@ class TestUpdateCardio:
     async def test_update_success(self, auth_client: AsyncClient):
         post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
         workout_id = post_resp.json()["id"]
-        response = await auth_client.put(
+        response = await auth_client.patch(
             f"/api/cardio/{workout_id}",
             json={
                 "name": "Evening Run",
@@ -161,7 +161,7 @@ class TestUpdateCardio:
     async def test_update_partial(self, auth_client: AsyncClient):
         post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
         workout_id = post_resp.json()["id"]
-        response = await auth_client.put(
+        response = await auth_client.patch(
             f"/api/cardio/{workout_id}",
             json={"notes": "Just notes update"},
         )
@@ -169,14 +169,14 @@ class TestUpdateCardio:
         assert response.json()["notes"] == "Just notes update"
 
     async def test_update_not_found(self, auth_client: AsyncClient):
-        response = await auth_client.put(
+        response = await auth_client.patch(
             "/api/cardio/99999",
             json={"name": "Doesn't matter"},
         )
         assert response.status_code == 404
 
     async def test_update_unauthorized(self, client: AsyncClient):
-        response = await client.put(
+        response = await client.patch(
             "/api/cardio/1",
             json={"name": "Hacked"},
         )
@@ -187,7 +187,7 @@ class TestUpdateCardio:
     ):
         post_resp = await auth_client.post("/api/cardio/", json=_WORKOUT_DATA)
         workout_id = post_resp.json()["id"]
-        response = await second_auth_client.put(
+        response = await second_auth_client.patch(
             f"/api/cardio/{workout_id}",
             json={"name": "Stolen"},
         )

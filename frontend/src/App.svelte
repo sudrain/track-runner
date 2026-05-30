@@ -5,7 +5,7 @@
   import Skeleton from './lib/components/Skeleton.svelte'
   import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
-  import { currentRoute, navigate, parseHash } from './lib/router'
+  import { route as router, navigate, parseHash } from './lib/router.svelte'
   import { auth } from './lib/stores/auth.svelte'
   import Home from './routes/Home.svelte'
   import Login from './routes/Login.svelte'
@@ -18,7 +18,7 @@
   import StrengthDetail from './routes/StrengthDetail.svelte'
 
   function handleHashChange() {
-    currentRoute.set(parseHash())
+    router.current = parseHash()
   }
 
   onMount(() => {
@@ -27,7 +27,7 @@
     return () => window.removeEventListener('hashchange', handleHashChange)
   })
 
-  let route = $derived($currentRoute)
+  let route = $derived(router.current)
 </script>
 
 {#if auth.loading}

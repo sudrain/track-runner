@@ -1,5 +1,5 @@
 export interface Toast {
-  id: number
+  id: string
   message: string
   type: 'success' | 'error'
 }
@@ -11,13 +11,13 @@ export function getToasts() {
 }
 
 export function showToast(message: string, type: 'success' | 'error' = 'success') {
-  const id = Date.now() + Math.random()
+  const id = crypto.randomUUID()
   _toasts = [..._toasts, { id, message, type }]
   setTimeout(() => {
     _toasts = _toasts.filter(t => t.id !== id)
   }, 3500)
 }
 
-export function dismissToast(id: number) {
+export function dismissToast(id: string) {
   _toasts = _toasts.filter(t => t.id !== id)
 }

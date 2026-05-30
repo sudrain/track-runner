@@ -1,7 +1,7 @@
 <script lang="ts">
   import { auth } from '../lib/stores/auth.svelte'
   import { stats } from '../lib/stores/stats.svelte'
-  import { navigate } from '../lib/router'
+  import { navigate } from '../lib/router.svelte'
   import { api } from '../lib/api/client'
   import { formatDateShort } from '../lib/utils/format'
   import { formatTempoShort } from '../lib/utils/tempo'

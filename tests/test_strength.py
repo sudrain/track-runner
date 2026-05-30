@@ -116,7 +116,7 @@ class TestUpdateStrength:
     async def test_update_success(self, auth_client: AsyncClient):
         post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
         workout_id = post_resp.json()["id"]
-        response = await auth_client.put(
+        response = await auth_client.patch(
             f"/api/strength/{workout_id}",
             json={
                 "notes": "Updated leg day",
@@ -137,7 +137,7 @@ class TestUpdateStrength:
     async def test_update_partial(self, auth_client: AsyncClient):
         post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
         workout_id = post_resp.json()["id"]
-        response = await auth_client.put(
+        response = await auth_client.patch(
             f"/api/strength/{workout_id}",
             json={"notes": "Just notes"},
         )
@@ -145,14 +145,14 @@ class TestUpdateStrength:
         assert response.json()["notes"] == "Just notes"
 
     async def test_update_not_found(self, auth_client: AsyncClient):
-        response = await auth_client.put(
+        response = await auth_client.patch(
             "/api/strength/99999",
             json={"notes": "Nope"},
         )
         assert response.status_code == 404
 
     async def test_update_unauthorized(self, client: AsyncClient):
-        response = await client.put(
+        response = await client.patch(
             "/api/strength/1",
             json={"notes": "Hacked"},
         )
@@ -163,7 +163,7 @@ class TestUpdateStrength:
     ):
         post_resp = await auth_client.post("/api/strength/", json=_WORKOUT_DATA)
         workout_id = post_resp.json()["id"]
-        response = await second_auth_client.put(
+        response = await second_auth_client.patch(
             f"/api/strength/{workout_id}",
             json={"notes": "Stolen"},
         )

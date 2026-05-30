@@ -1,5 +1,5 @@
 import { api, ApiError, type User } from '../api/client'
-import { navigate } from '../router'
+import { navigate } from '../router.svelte'
 
 class AuthStore {
   user = $state<User | null>(null)

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { currentRoute, navigate, type Route } from '../router'
+  import { route as router, navigate, type Route } from '../router.svelte'
   import { auth } from '../stores/auth.svelte'
 
-  let route = $derived($currentRoute)
+  let route = $derived(router.current)
   let mobileOpen = $state(false)
 
   function nav(to: Route['name'], opts?: { id?: number }) {

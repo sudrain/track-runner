@@ -103,7 +103,7 @@ class CardioStore {
 
   async update(id: number, data: CardioWorkoutUpdate) {
     this.error = null
-    this.current = await api.put<CardioWorkoutOut>(`/api/cardio/${id}`, data)
+    this.current = await api.patch<CardioWorkoutOut>(`/api/cardio/${id}`, data)
     return this.current
   }
 
@@ -215,7 +215,7 @@ class StrengthStore {
 
   async update(id: number, data: StrengthWorkoutUpdate) {
     this.error = null
-    this.current = await api.put<StrengthWorkoutOut>(`/api/strength/${id}`, data)
+    this.current = await api.patch<StrengthWorkoutOut>(`/api/strength/${id}`, data)
     return this.current
   }
 

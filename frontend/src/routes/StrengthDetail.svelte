@@ -1,7 +1,7 @@
 <script lang="ts">
   import { strength, type StrengthWorkoutCreate } from '../lib/stores/workouts.svelte'
   import { ApiError } from '../lib/api/client'
-  import { navigate } from '../lib/router'
+  import { navigate } from '../lib/router.svelte'
   import StrengthForm from '../lib/components/StrengthForm.svelte'
   import ExerciseList from '../lib/components/ExerciseList.svelte'
   import Skeleton from '../lib/components/Skeleton.svelte'

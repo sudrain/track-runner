@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { currentRoute, navigate } from '../router'
+  import { route as router, navigate } from '../router.svelte'
   import { auth } from '../stores/auth.svelte'
 
-  let route = $derived($currentRoute)
+  let route = $derived(router.current)
 
   function isActive(names: string[]): boolean {
     return names.includes(route.name)

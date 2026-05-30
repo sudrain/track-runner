@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cardio, type CardioWorkoutCreate, type CardioIntervalOut } from '../lib/stores/workouts.svelte'
   import { ApiError } from '../lib/api/client'
-  import { navigate } from '../lib/router'
+  import { navigate } from '../lib/router.svelte'
   import CardioForm from '../lib/components/CardioForm.svelte'
   import IntervalList from '../lib/components/IntervalList.svelte'
   import Skeleton from '../lib/components/Skeleton.svelte'
