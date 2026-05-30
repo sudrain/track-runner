@@ -19,7 +19,6 @@
 
     <div class="hidden md:flex gap-5 items-center text-base">
       {#if auth.user}
-        <span class="text-indigo-200 truncate max-w-36">{auth.user.email}</span>
         <button
           class="hover:text-indigo-200 {route.name === 'cardio' || route.name === 'cardio-new' || route.name === 'cardio-detail' ? 'text-indigo-100 border-b border-indigo-300' : 'text-white'}"
           onclick={() => navigate('cardio')}
@@ -72,7 +71,6 @@
   {#if mobileOpen}
     <div class="md:hidden border-t border-indigo-600 bg-indigo-700 text-base">
       {#if auth.user}
-        <div class="px-4 py-3 text-indigo-200 truncate">{auth.user.email}</div>
         <button
           class="w-full text-left px-4 py-3 hover:bg-indigo-600 {route.name === 'home' ? 'bg-indigo-600' : ''}"
           onclick={() => nav('home')}
