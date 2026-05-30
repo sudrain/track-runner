@@ -38,6 +38,9 @@ def _run_alembic_upgrade():
     return True
 
 
+_TOKEN_CLEANUP_INTERVAL = 3600
+
+
 async def _cleanup_expired_tokens():
     try:
         async with AsyncSessionLocal() as session:
@@ -51,6 +54,12 @@ async def _cleanup_expired_tokens():
         logger.warning("Failed to cleanup expired tokens", exc_info=True)
 
 
+async def _cleanup_loop():
+    while True:
+        await asyncio.sleep(_TOKEN_CLEANUP_INTERVAL)
+        await _cleanup_expired_tokens()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if AUTO_MIGRATE:
@@ -60,7 +69,10 @@ async def lifespan(app: FastAPI):
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
     await _cleanup_expired_tokens()
+    cleanup_task = asyncio.create_task(_cleanup_loop())
     yield
+    cleanup_task.cancel()
+    await asyncio.gather(cleanup_task, return_exceptions=True)
 
 
 app = FastAPI(title="Track Runner", lifespan=lifespan)
