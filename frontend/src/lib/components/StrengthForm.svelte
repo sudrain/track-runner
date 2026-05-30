@@ -7,10 +7,12 @@
     workout,
     onsubmit,
     oncancel,
+    saving = false,
   } = $props<{
     workout?: StrengthWorkoutOut
     onsubmit: (data: StrengthWorkoutCreate) => void | Promise<void>
     oncancel?: () => void
+    saving?: boolean
   }>()
 
   let datetime = $state('')
@@ -211,10 +213,10 @@
   <div class="flex gap-3 pt-2">
       <button
         type="submit"
-        disabled={!valid}
+        disabled={!valid || saving}
         class="flex-1 bg-indigo-600 text-white rounded-lg py-4 text-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Save
+        {saving ? 'Saving...' : 'Save'}
       </button>
       {#if oncancel}
         <button

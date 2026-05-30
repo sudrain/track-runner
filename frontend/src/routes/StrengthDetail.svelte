@@ -71,7 +71,7 @@
       {/if}
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <StrengthForm workout={w} onsubmit={handleSave} oncancel={handleCancelEdit} />
+        <StrengthForm workout={w} {saving} onsubmit={handleSave} oncancel={handleCancelEdit} />
       </div>
     {:else}
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -122,8 +122,5 @@
       </div>
     {/if}
 
-    {#if saving}
-      <div class="text-gray-400 text-base text-center mt-4">Saving...</div>
-    {/if}
   {/if}
 </div>

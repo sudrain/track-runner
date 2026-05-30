@@ -35,10 +35,6 @@
   {/if}
 
   <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-1 py-2">
-    <StrengthForm onsubmit={handleSubmit} oncancel={handleCancel} />
+    <StrengthForm {saving} onsubmit={handleSubmit} oncancel={handleCancel} />
   </div>
-
-  {#if saving}
-    <div class="text-gray-400 text-sm text-center mt-4">Saving...</div>
-  {/if}
 </div>
