@@ -58,3 +58,7 @@ class AuthStore {
 }
 
 export const auth = new AuthStore()
+
+api.onUnauth = () => {
+  auth.user = null
+}
