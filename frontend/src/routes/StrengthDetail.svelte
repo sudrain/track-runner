@@ -4,6 +4,7 @@
   import { navigate } from '../lib/router'
   import StrengthForm from '../lib/components/StrengthForm.svelte'
   import ExerciseList from '../lib/components/ExerciseList.svelte'
+  import Skeleton from '../lib/components/Skeleton.svelte'
   import { formatDateShort } from '../lib/utils/format'
   import { showConfirm } from '../lib/stores/confirm.svelte'
   import { showToast } from '../lib/stores/toast.svelte'
@@ -59,7 +60,23 @@
   </button>
 
   {#if strength.currentLoading}
-    <div class="text-gray-400 text-center py-12">Loading...</div>
+    <div class="space-y-4">
+      <Skeleton class="h-4 w-32" />
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-3">
+        <Skeleton class="h-7 w-48" />
+        <Skeleton class="h-4 w-36" />
+        <div class="flex gap-6 mt-4">
+          <Skeleton class="h-10 w-20" />
+          <Skeleton class="h-10 w-16" />
+          <Skeleton class="h-10 w-24" />
+        </div>
+        <Skeleton class="h-5 w-28 mt-4" />
+        <div class="space-y-2">
+          <Skeleton class="h-16 w-full rounded-lg" />
+          <Skeleton class="h-16 w-full rounded-lg" />
+        </div>
+      </div>
+    </div>
   {:else if strength.error}
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{strength.error}</div>
   {:else if w}

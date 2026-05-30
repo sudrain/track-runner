@@ -4,6 +4,7 @@
   import { navigate } from '../lib/router'
   import CardioForm from '../lib/components/CardioForm.svelte'
   import IntervalList from '../lib/components/IntervalList.svelte'
+  import Skeleton from '../lib/components/Skeleton.svelte'
   import { formatDateShort } from '../lib/utils/format'
   import { formatTempoShort } from '../lib/utils/tempo'
   import { showConfirm } from '../lib/stores/confirm.svelte'
@@ -61,7 +62,21 @@
   </button>
 
   {#if cardio.currentLoading}
-    <div class="text-gray-400 text-center py-12">Loading...</div>
+    <div class="space-y-4">
+      <Skeleton class="h-4 w-32" />
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-3">
+        <Skeleton class="h-7 w-48" />
+        <Skeleton class="h-4 w-36" />
+        <div class="flex gap-6 mt-4">
+          <Skeleton class="h-10 w-16" />
+          <Skeleton class="h-10 w-16" />
+          <Skeleton class="h-10 w-20" />
+        </div>
+        <Skeleton class="h-5 w-24 mt-4" />
+        <Skeleton class="h-10 w-full" />
+        <Skeleton class="h-10 w-full" />
+      </div>
+    </div>
   {:else if cardio.error}
     <div class="text-red-600 text-base bg-red-50 border border-red-200 rounded px-4 py-3">{cardio.error}</div>
   {:else if w}

@@ -5,6 +5,7 @@
   import { api } from '../lib/api/client'
   import { formatDateShort } from '../lib/utils/format'
   import { formatTempoShort } from '../lib/utils/tempo'
+  import Skeleton from '../lib/components/Skeleton.svelte'
   import type { CardioWorkoutOut, CardioIntervalOut, StrengthWorkoutOut } from '../lib/stores/workouts.svelte'
 
   let recentCardio = $state<CardioWorkoutOut[]>([])
@@ -55,7 +56,15 @@
 {#if auth.user}
   <div>
     {#if stats.loading}
-      <div class="text-gray-400 text-center py-12">Loading statistics...</div>
+      <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
+        {#each [1, 2, 3] as _}
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4 space-y-2">
+            <Skeleton class="h-3 w-12" />
+            <Skeleton class="h-7 w-20" />
+            <Skeleton class="h-3 w-16" />
+          </div>
+        {/each}
+      </div>
     {:else if stats.error}
       <div class="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-4 py-3 mb-4">{stats.error}</div>
     {:else if stats.data}
@@ -94,7 +103,20 @@
     </div>
 
     {#if recentLoading}
-      <div class="text-gray-400 text-center py-6 text-base">Loading recent workouts...</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-3">
+          <Skeleton class="h-5 w-32" />
+          {#each [1, 2, 3] as _}
+            <Skeleton class="h-12 w-full rounded-lg" />
+          {/each}
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 space-y-3">
+          <Skeleton class="h-5 w-36" />
+          {#each [1, 2, 3] as _}
+            <Skeleton class="h-12 w-full rounded-lg" />
+          {/each}
+        </div>
+      </div>
     {:else}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">

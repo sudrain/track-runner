@@ -2,6 +2,7 @@
   import Layout from './lib/components/Layout.svelte'
   import Toast from './lib/components/Toast.svelte'
   import ConfirmDialog from './lib/components/ConfirmDialog.svelte'
+  import Skeleton from './lib/components/Skeleton.svelte'
   import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import { currentRoute, navigate, parseHash } from './lib/router'
@@ -30,8 +31,13 @@
 </script>
 
 {#if auth.loading}
-  <div class="flex items-center justify-center min-h-screen text-gray-400 text-lg">
-    Loading...
+  <div class="min-h-screen bg-gray-50 p-8 space-y-4">
+    <div class="max-w-5xl mx-auto space-y-4">
+      <Skeleton class="h-8 w-48" />
+      <Skeleton class="h-4 w-full" />
+      <Skeleton class="h-4 w-3/4" />
+      <Skeleton class="h-4 w-1/2" />
+    </div>
   </div>
 {:else}
   <Toast />
